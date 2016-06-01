@@ -9,5 +9,10 @@ def logit(x,coef):
 def exp(x,coef):
     return coef[0]*math.pow(math.e,coef[2]*x)+coef[1]
 
+def exp4(x,coef):
+    return coef[0] * math.pow(math.e, coef[2] * x+ coef[3]) + coef[1]
 def exp2(x,coef):
     return math.pow(math.e,coef[1]*x)+coef[0]
+
+def quadratic(x,coef):
+    return float(coef[1])*float(x)+float(coef[0])+float(coef[2])*math.pow(x,2.0)

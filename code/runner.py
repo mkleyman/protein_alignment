@@ -3,6 +3,7 @@ import align
 import curves
 from scipy import optimize
 import numpy as np
+import math
 import param_search
 import sys
 import seaborn as sns
@@ -46,12 +47,13 @@ print len(homolog_dict.keys())
 print homolog_dict.items()[1]
 #print list(human_proteins.loc['Q04917'])
 spline_dict,weight_dict = align.make_spline_dict(human_proteins, htimes)
-for key in spline_dict:
-    plotting.plot_spline(htimes, spline_dict[key],plot_folder,key)
+'''for key in spline_dict:
+    plotting.plot_spline(htimes, spline_dict[key],plot_folder,key)'''
 #normalize weight dict
 avg = np.mean(weight_dict.values())
 for key in weight_dict:
-    weight_dict[key] = weight_dict[key]/avg
+    weight_dict[key] = 1.0
+    #weight_dict[key] = weight_dict[key]/avg
 
 print len(spline_dict.keys())
 #rint spline_dict.items()[1]
@@ -61,16 +63,19 @@ human_subset = human_proteins[human_proteins.index.isin(homologs)]
 mouse_dict = align.make_ref_dict(mouse_subset, times, align.mean_values)
 times_uniq = list(set(times))
 times_uniq.sort()
-parser.read_in_GO(go_file, set(homolog_dict.keys()))
+#parser.read_in_GO(go_file, set(homolog_dict.keys()))
 negative_spearman = lambda ref_times, ref_expression, spline: \
     -1.0*align.curve_spearman(ref_times, ref_expression, spline)
+negative_pearson = lambda ref_times, ref_expression, spline: \
+    -1.0 *align.curve_pearson(ref_times, ref_expression, spline)
 print "key# "+str(len(mouse_dict.keys()))
 count_spearman = lambda ref_times, ref_expression, spline: \
     align.count_above(ref_times,ref_expression,spline,align.curve_spearman, 0.6)
 count_pearson =  lambda ref_times, ref_expression, spline: \
     align.count_above(ref_times,ref_expression,spline,align.curve_pearson, 0.6)
-print "init_err: "+str(align.error_function_summarize(curves.linear, homolog_dict, mouse_dict,
-                           count_pearson, times_uniq, spline_dict, max, weight_dict, [1.1*100,.01]))
+#print "init_err: "+str(align.error_function_summarize(curves.linear, homolog_dict, mouse_dict,
+ #                          count_pearson, times_uniq, spline_dict, max, weight_dict, [1.1*100,.01]))
+
 error_fun = lambda a: len(mouse_dict.keys())-align.error_function_summarize(curves.linear,
                                            homolog_dict, mouse_dict,
                                            count_spearman, times_uniq,
@@ -103,19 +108,51 @@ error_fun8 = lambda a: align.error_function_summarize(curves.exp2,
                                                       count_pearson, times_uniq,
                                                       spline_dict, max,
                                                       weight_dict, a)
-options = {"method":"Powell"}
+error_fun9 = lambda a: align.error_function_summarize(curves.linear,
+                                                      homolog_dict, mouse_dict,
+                                                      align.curve_spearman, times_uniq,
+                                                      spline_dict, max,
+                                                      weight_dict, a)
+
+error_fun10 = lambda a: align.error_function_summarize(curves.linear,
+                                                      homolog_dict, mouse_dict,
+                                                      align.curve_pearson, times_uniq,
+                                                      spline_dict, max,
+                                                      weight_dict, a)
+error_fun11 = lambda a: align.error_function_summarize(curves.linear,
+                                                      homolog_dict, mouse_dict,
+                                                      align.curve_distance, times_uniq,
+                                                      spline_dict, max,
+                                                      weight_dict, a)
+error_funq = lambda a: len(mouse_dict.keys()) - align.error_function_summarize(curves.quadratic,
+                                                                              homolog_dict, mouse_dict,
+                                                                              count_pearson, times_uniq,
+                                                                              spline_dict, max, weight_dict, a)
+
+error_fun_pearson_linear = lambda a: align.error_function_summarize(curves.linear,
+                                      homolog_dict, mouse_dict,
+                                      negative_pearson, times_uniq,
+                                      spline_dict, max, weight_dict, a)
+options = {"method":"Nelder-Mead"}
 #result = optimize.basinhopping(error_fun, [1,0.05], niter=300, minimizer_kwargs=options)
 #result = optimize.minimize(error_fun, [1,0.05], method="Nelder-Mead")
+'''
 rranges = (slice(0,3300,100),slice(1,300,10))
+
 range1 = xrange(0,3300,100)
-range2 = xrange(0,300,5)
-recording = param_search.record_twoparam(error_fun7, range1,range2)
-np.savetxt("linear_param_search_pearson.txt", recording)
+range2 = xrange(0,180,5)
+recording = param_search.record_twoparam(error_fun10, range1,range2)
+np.savetxt("linear_param_pearson.txt", recording)
 #recording = np.loadtxt("linear_param_search.txt")
 heatmap = sns.heatmap(recording, cmap="YlGnBu",xticklabels=10, yticklabels= 10)
-heatmap.get_figure().savefig("linear_param_search_pearson.png")
+heatmap.get_figure().savefig("linear_param_pearson.png")
 '''
-result = optimize.brute(error_fun5,rranges, full_output=True, finish= optimize.fmin)
+
+use_fun = error_fun_pearson_linear
+init_conditions = [100,30]
+print "initial err: "+str(use_fun(init_conditions))
+'''
+result = optimize.brute(error_fun,rranges, full_output=True, finish= optimize.fmin)
 #print result.x
 print "coefs: "+ str(result[0])
 print "best: "+ str(result[1])
@@ -123,9 +160,12 @@ print "best: "+ str(result[1])
                            #align.curve_spearman, times_uniq, spline_dict, [2.09575833e+02,   2.95969535e-02])
 count_good = align.error_function_summarize(curves.linear, homolog_dict, mouse_dict,
                            align.curve_spearman, times_uniq, spline_dict, max, weight_dict, result[0])
-print count_good
+            '''
+result = optimize.basinhopping(use_fun,init_conditions, minimizer_kwargs=options)
+print result.x
+print use_fun(result.x)
 
 
 #print human_proteins[:5]
 #print list(human_proteins.iloc[1])
-'''
+

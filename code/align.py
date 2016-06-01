@@ -34,13 +34,19 @@ def curve_spearman(ref_times, ref_expression, spline):
        '''
     spline_expression = [spline(time) for time in ref_times]
     cor, pval = stats.spearmanr(a=ref_expression, b=spline_expression)
-    return cor
+    if np.isnan(cor):
+        return 0.0
+    else:
+        return cor
 
 
 def curve_pearson(ref_times, ref_expression, spline):
     spline_expression = [spline(time) for time in ref_times]
     cor, pval = stats.pearsonr(ref_expression, spline_expression)
-    return cor
+    if np.isnan(cor):
+        return 0.0
+    else:
+        return cor
 
 
 def count_above(ref_times, ref_expression, spline, dif_function,min_val):
@@ -102,10 +108,11 @@ def error_function_summarize(alignment_function, homolog_dict,
     # ref_proteins = list(ref_table.index)
     tot_error = 0
     for protein in ref_dict:
-        tot_error += summary_fun([dif_function(ref_times=aligned_times,
+        add = summary_fun([dif_function(ref_times=aligned_times,
                                            ref_expression=list(ref_dict[protein]),
                                            spline=spline_dict[homolog])*weight_dict[homolog] for
                               homolog in homolog_dict[protein]])
+        tot_error+=add
     return tot_error
 
 
