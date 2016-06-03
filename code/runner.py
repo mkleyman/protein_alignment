@@ -133,7 +133,24 @@ error_fun_pearson_linear = lambda a: align.error_function_summarize(curves.linea
                                       homolog_dict, mouse_dict,
                                       negative_pearson, times_uniq,
                                       spline_dict, max, weight_dict, a)
-options = {"method":"Nelder-Mead"}
+error_fun_pearson_quadratic = lambda a: align.error_function_summarize(curves.quadratic,
+                                            homolog_dict, mouse_dict,
+                                            negative_pearson, times_uniq,
+                                            spline_dict, max, weight_dict, a)
+
+error_fun_pearson_cubic = lambda a: align.error_function_summarize(curves.quadratic,
+                                       homolog_dict, mouse_dict,
+                                       negative_pearson, times_uniq,
+                                       spline_dict, max, weight_dict, a)
+error_fun_pearson_count_cubic = lambda a: -1.0*align.error_function_summarize(curves.cubic2,
+                                                       homolog_dict, mouse_dict,
+                                                       count_pearson, times_uniq,
+                                                       spline_dict, max, weight_dict, a)
+
+error_fun_pearson_count_sqrt = lambda a: -1.0 * align.error_function_summarize(curves.square_root,
+                                                                        homolog_dict, mouse_dict,
+                                                                        count_pearson, times_uniq,
+                                                                        spline_dict, max, weight_dict, a)
 #result = optimize.basinhopping(error_fun, [1,0.05], niter=300, minimizer_kwargs=options)
 #result = optimize.minimize(error_fun, [1,0.05], method="Nelder-Mead")
 '''
@@ -148,9 +165,7 @@ heatmap = sns.heatmap(recording, cmap="YlGnBu",xticklabels=10, yticklabels= 10)
 heatmap.get_figure().savefig("linear_param_pearson.png")
 '''
 
-use_fun = error_fun_pearson_linear
-init_conditions = [100,30]
-print "initial err: "+str(use_fun(init_conditions))
+
 '''
 result = optimize.brute(error_fun,rranges, full_output=True, finish= optimize.fmin)
 #print result.x
@@ -159,13 +174,21 @@ print "best: "+ str(result[1])
 #err = align.error_function(curves.linear, homolog_dict, mouse_dict,
                            #align.curve_spearman, times_uniq, spline_dict, [2.09575833e+02,   2.95969535e-02])
 count_good = align.error_function_summarize(curves.linear, homolog_dict, mouse_dict,
-                           align.curve_spearman, times_uniq, spline_dict, max, weight_dict, result[0])
-            '''
-result = optimize.basinhopping(use_fun,init_conditions, minimizer_kwargs=options)
-print result.x
-print use_fun(result.x)
+                           align.curve_spearman, times_uniq, spline_dict, max, weight_dict, result[0])       '''
 
+options = {"method":"Powell"}
+use_fun = error_fun_pearson_count_sqrt
+init_conditions = [1000.3, 20.2,50.3]
+brute = True
+print "initial err: "+str(use_fun(init_conditions))
+if(not brute):
+    result = optimize.basinhopping(use_fun,init_conditions, minimizer_kwargs=options)
+    print result.x
+    print use_fun(result.x)
+else:
+    rranges = (slice(0.0,3300.0,50.0),slice(1.0,100.0,2.0), slice(0,500,5))
+    result = optimize.brute(use_fun,rranges, full_output=True, finish= optimize.fmin)
+    print "coefs: " + str(result[0])
+    print "best: " + str(result[1])
 
-#print human_proteins[:5]
-#print list(human_proteins.iloc[1])
 
