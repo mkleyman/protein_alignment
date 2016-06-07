@@ -8,3 +8,6 @@ def FDR(human_proteins, htimes, error_fun, opt_fun, init_param):
         result = opt_fun(goal_fun, init_param)
         vals.append(goal_fun(result.x))
     return vals
+
+def find_best(error_function, init_param):
+    return None

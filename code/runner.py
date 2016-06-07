@@ -72,7 +72,7 @@ print "key# "+str(len(mouse_dict.keys()))
 count_spearman = lambda ref_times, ref_expression, spline: \
     align.count_above(ref_times,ref_expression,spline,align.curve_spearman, 0.6)
 count_pearson =  lambda ref_times, ref_expression, spline: \
-    align.count_above(ref_times,ref_expression,spline,align.curve_pearson, 0.6)
+    align.count_above(ref_times,ref_expression,spline,align.curve_pearson, 0.8)
 #print "init_err: "+str(align.error_function_summarize(curves.linear, homolog_dict, mouse_dict,
  #                          count_pearson, times_uniq, spline_dict, max, weight_dict, [1.1*100,.01]))
 
@@ -151,6 +151,11 @@ error_fun_pearson_count_sqrt = lambda a: -1.0 * align.error_function_summarize(c
                                                                         homolog_dict, mouse_dict,
                                                                         count_pearson, times_uniq,
                                                                         spline_dict, max, weight_dict, a)
+
+error_fun_pearson_count_log = lambda a: -1.0 * align.error_function_summarize(curves.logarithm,
+                                                                               homolog_dict, mouse_dict,
+                                                                               count_pearson, times_uniq,
+                                                                               spline_dict, max, weight_dict, a)
 #result = optimize.basinhopping(error_fun, [1,0.05], niter=300, minimizer_kwargs=options)
 #result = optimize.minimize(error_fun, [1,0.05], method="Nelder-Mead")
 '''
@@ -176,10 +181,10 @@ print "best: "+ str(result[1])
 count_good = align.error_function_summarize(curves.linear, homolog_dict, mouse_dict,
                            align.curve_spearman, times_uniq, spline_dict, max, weight_dict, result[0])       '''
 
-options = {"method":"Powell"}
-use_fun = error_fun_pearson_count_sqrt
-init_conditions = [1000.3, 20.2,50.3]
-brute = True
+options = {"method":"Nelder-Mead"}
+use_fun = error_fun_pearson_count_log
+init_conditions = [300,20,10,50]
+brute = False
 print "initial err: "+str(use_fun(init_conditions))
 if(not brute):
     result = optimize.basinhopping(use_fun,init_conditions, minimizer_kwargs=options)

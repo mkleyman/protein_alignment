@@ -28,3 +28,6 @@ def cubic2(x,coef):
 
 def square_root(x,coef):
     return float(coef[1])*math.sqrt(float(x)+float(coef[2]))+float(coef[0])
+
+def logarithm(x,coef):
+    return float(coef[1])*math.log1p(float(coef[2])*x+float(coef[3]))+float(coef[0])
