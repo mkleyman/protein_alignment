@@ -197,3 +197,6 @@ else:
     print "best: " + str(result[1])
 
 
+thresholds = [0.6,0.7,0.8]
+functions = {}
+for funct in functions.values():
