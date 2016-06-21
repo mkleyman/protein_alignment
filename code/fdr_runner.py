@@ -4,6 +4,7 @@ import curves
 from scipy import optimize
 import numpy as np
 import csv
+import significance, opt_params
 
 
 reference = "../processed/mouse_proteins.csv"
@@ -193,52 +194,50 @@ else:
     print "best: " + str(result[1])
 '''
 
-thresholds = [0.6,0.7,0.8]
+thresholds = [0.6]
 init_dict = {}
 functions = {}
 functions["Linear"] = curves.linear
 init_dict["Linear"] = [2000.0,25.0]
-#functions["Quadratic"] =curves.quadratic
-#init_dict["Quadratic"] = [1000.0,25.0,5.0]
+functions["Quadratic"] =curves.quadratic
+init_dict["Quadratic"] = [1000.0,25.0,5.0]
 #functions["Cubic"] = curves.cubic
 #init_dict["Cubic"] = [50.0,25.0,7.0,3.0]
 functions["Sqrt"] = curves.square_root
 init_dict["Sqrt"] = [2000.0,25.0]
 
-#functions["Gompertz"] = curves.gom
-#init_dict["Gompertz"] = [40.0,5.0,3.5]
+functions["Gompertz"] = curves.gom
+init_dict["Gompertz"] = [40.0,5.0,3.5]
 options = {"method":"Nelder-Mead"}
+funct_list = ["Sqrt","Linear","Gompertz","Quadratic"]
 with open("results_partial.csv",'wb') as resultfile:
     result_writer = csv.writer(resultfile)
-    for functname,funct in functions.items():
-        print functname
+    for functname in funct_list:
+        funct = functions[functname]
         init = init_dict[functname]
         for thresh in thresholds:
-            print thresh
             count_spearman = lambda ref_times, ref_expression, spline: \
             align.count_above(ref_times,ref_expression,spline,align.curve_spearman, thresh)
-            error_fun_spearman_count = lambda a: -1.0 * align.error_function_summarize(funct,
-                                                                                   homolog_dict, mouse_dict,
-                                                                                   count_spearman, times_uniq,
-                                                                                   spline_dict, max, weight_dict, a)
+            error_fun_spearman_count_pars = lambda seed,a: -1.0 * align.error_function_summarize_rand(funct,
+                                           homolog_dict, mouse_dict,
+                                           count_spearman, times_uniq,
+                                           spline_dict, max, weight_dict, seed,a)
+            filename = functname+"_spearman.txt"
+            with open(filename,mode='wb') as writefile:
+                writefile.write(functname+"_spearman\n")
+            disc = significance.FDR(error_fun_spearman_count_pars, init, filename, 50)
 
-            result = optimize.basinhopping(error_fun_spearman_count,init, minimizer_kwargs=options)
-            result_writer.writerow([functname,"spearman",thresh,result.x,error_fun_spearman_count(result.x) ])
 
 
 
-            print "spearman"
-            print result.x
-            print error_fun_spearman_count(result.x)
+
             count_pearson =  lambda ref_times, ref_expression, spline: \
             align.count_above(ref_times,ref_expression,spline,align.curve_pearson, thresh)
-            error_fun_pearson_count = lambda a: -1.0 * align.error_function_summarize(funct,
-                                                                                   homolog_dict, mouse_dict,
-                                                                                   count_spearman, times_uniq,
-                                                                                   spline_dict, max, weight_dict, a)
-            result = optimize.basinhopping(error_fun_pearson_count,init, minimizer_kwargs=options)
-
-            result_writer.writerow([functname,"pearson",thresh,result.x,error_fun_pearson_count(result.x) ])
-            print "pearson"
-            print result.x
-            print error_fun_pearson_count(result.x)
+            error_fun_pearson_count_pars = lambda seed,a: -1.0 * align.error_function_summarize_rand(funct,
+                                           homolog_dict, mouse_dict,
+                                           count_pearson, times_uniq,
+                                           spline_dict, max, weight_dict, seed,a)
+            filename = functname+"_pearson.txt"
+            with open(filename,mode='wb') as writefile:
+                writefile.write(functname+"_pearson\n")
+            disc = significance.FDR(error_fun_spearman_count_pars, init, filename, 50)

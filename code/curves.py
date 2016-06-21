@@ -27,7 +27,15 @@ def cubic2(x,coef):
     return float(coef[1]) * math.pow(x, 3.0) + float(coef[0])
 
 def square_root(x,coef):
-    return float(coef[1])*math.sqrt(float(x)+float(coef[2]))+float(coef[0])
+    return float(coef[1])*math.sqrt(float(x))+float(coef[0])
 
 def logarithm(x,coef):
     return float(coef[1])*math.log1p(float(coef[2])*x+float(coef[3]))+float(coef[0])
+
+def logistic(x,coef):
+    numerator = float(coef[1])-float(coef[0])
+    denom = math.pow(float([3])+float(coef[4])*math.pow(math.e,(-1*float(coef[2])*x)),1.0/float(coef[5]))
+    return float(coef[0])+numerator/denom
+
+def gom(x,coef):
+    return float(coef[0])*math.pow(math.e,(-1*float(coef[1])*math.pow(math.e, (-1*float(coef[2])*x))))

@@ -1,7 +1,9 @@
 from scipy import stats, interpolate, optimize
-import math
+import math, bisect,sys
 import numpy as np
 from random import shuffle
+
+
 
 
 def curve_distance(ref_times, ref_expression, spline):
@@ -102,19 +104,95 @@ def error_function_summarize(alignment_function, homolog_dict,
     :param coef: arguments for the dif_function
     :return: total error
     '''
+
     aligned_times = [alignment_function(float(time), coef) for time in times]
+    #index of 0
+    z_index = bisect.bisect(aligned_times,0)
+    if z_index>len(aligned_times)/2:
+        return sys.maxint
+
     # interval = [aligned_times[0],aligned_times[-1]]
     # spline_dict = make_spline_dict(comp_table, comp_times, interval)
     # ref_proteins = list(ref_table.index)
     tot_error = 0
     for protein in ref_dict:
-        add = summary_fun([dif_function(ref_times=aligned_times,
-                                           ref_expression=list(ref_dict[protein]),
+        add = summary_fun([dif_function(ref_times=aligned_times[z_index:],
+                                           ref_expression=list(ref_dict[protein])[z_index:],
                                            spline=spline_dict[homolog])*weight_dict[homolog] for
                               homolog in homolog_dict[protein]])
         tot_error+=add
     return tot_error
 
+def error_function_summarize_rand(alignment_function, homolog_dict,
+                   ref_dict, dif_function, times,
+                   spline_dict, summary_fun, weight_dict, seed, coef):
+    '''
+
+    :param alignment_function: function to align reference time series to the
+    comparison spline
+    :param homolog_dict:  dictionary between the reference and comparison list
+    :param ref_dict: dictionary mapping reference protein to expression values
+    :param dif_function: function to be used as the difference between 2 time series
+    :param times:  time points for reference
+    :param spline_dict: dictionary of the comparison proteins
+     and their associated splines
+    :param summary_fun: function of how to summarize error for 1-many mapping of
+    homologs between reference an comparison
+    :param coef: arguments for the dif_function
+    :return: total error
+    '''
+
+    aligned_times = [alignment_function(float(time), coef) for time in times]
+    #index of 0
+    z_index = bisect.bisect(aligned_times,0)
+    if z_index>len(aligned_times)/2:
+        return sys.maxint
+
+    # interval = [aligned_times[0],aligned_times[-1]]
+    # spline_dict = make_spline_dict(comp_table, comp_times, interval)
+    # ref_proteins = list(ref_table.index)
+    tot_error = 0
+    for protein in ref_dict:
+        add = summary_fun([dif_function(ref_times=aligned_times[z_index:],
+                                           ref_expression=shuffle(list(ref_dict[protein])[z_index:], lambda: seed),
+                                           spline=spline_dict[homolog])*weight_dict[homolog] for
+                              homolog in homolog_dict[protein]])
+        tot_error+=add
+    return tot_error
+
+def error_function_summarize_dict(alignment_function, homolog_dict,
+                   ref_dict, dif_function, times,
+                   spline_dict, summary_fun, weight_dict, coef):
+    '''
+
+    :param alignment_function: function to align reference time series to the
+    comparison spline
+    :param homolog_dict:  dictionary between the reference and comparison list
+    :param ref_dict: dictionary mapping reference protein to expression values
+    :param dif_function: function to be used as the difference between 2 time series
+    :param times:  time points for reference
+    :param spline_dict: dictionary of the comparison proteins
+     and their associated splines
+    :param summary_fun: function of how to summarize error for 1-many mapping of
+    homologs between reference an comparison
+    :param coef: arguments for the dif_function
+    :return: total error
+    '''
+    aligned_times = [alignment_function(float(time), coef) for time in times]
+    z_index = bisect.bisect(aligned_times,0)
+    if z_index>len(aligned_times)/2:
+        return None
+
+    # interval = [aligned_times[0],aligned_times[-1]]
+    # spline_dict = make_spline_dict(comp_table, comp_times, interval)
+    # ref_proteins = list(ref_table.index)
+    protein_dict = {}
+    for protein in ref_dict:
+        protein_dict[protein] = summary_fun([dif_function(ref_times=aligned_times[z_index:],
+                                           ref_expression=list(ref_dict[protein])[z_index:],
+                                           spline=spline_dict[homolog])*weight_dict[homolog] for
+                              homolog in homolog_dict[protein]])
+    return protein_dict
 
 def make_spline_dict(comp_table, times):
     '''

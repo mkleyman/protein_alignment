@@ -95,14 +95,15 @@ def read_in_GO(filename, proteins):
 
     :param filename:
     :param proteins: collection of relevant protiens
-    :return: dictionary mapping protein id to lsit of corresponding GO ids
+    :return: dictionary mapping protein id to list of corresponding GO ids
     '''
     protien_go_dict = {}
     go_protein_dict = {}
-    with open(filename, 'rb') as homolog_file:
+    with open(filename, 'r') as homolog_file:
         go_reader = csv.reader(homolog_file, delimiter="\t")
         for row in go_reader:
             if row[0] in proteins:
+                print row[0]
                 go_list = row[6].split(";")
                 protien_go_dict[row[0]] = go_list
                 for go in go_list:
@@ -113,7 +114,7 @@ def read_in_GO(filename, proteins):
 
     return protien_go_dict, go_protein_dict
 
-def merge_GO(reference_protien_go_dict, reference_go_protein, homolog_dict, comparison_protein_go_dict):
+def merge_GO(reference_protien_go_dict, homolog_dict, comparison_protein_go_dict):
     go_protein_dict = {}
     for protein in reference_protien_go_dict:
         homolog  = homolog_dict[protein]
@@ -123,6 +124,8 @@ def merge_GO(reference_protien_go_dict, reference_go_protein, homolog_dict, comp
                 go_protein_dict[go] = set()
             go_protein_dict[go].add(protein)
     return reference_protien_go_dict, go_protein_dict
+
+
 
 
 
