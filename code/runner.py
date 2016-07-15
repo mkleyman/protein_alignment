@@ -58,6 +58,8 @@ human_subset = human_proteins[human_proteins.index.isin(homologs)]
 mouse_dict = align.make_ref_dict(mouse_subset, times, align.mean_values)
 times_uniq = list(set(times))
 times_uniq.sort()
+htimes_uniq = list(set(htimes))
+htimes_uniq.sort()
 #parser.read_in_GO(go_file, set(homolog_dict.keys()))
 negative_spearman = lambda ref_times, ref_expression, spline: \
     -1.0*align.curve_spearman(ref_times, ref_expression, spline)
@@ -193,52 +195,64 @@ else:
     print "best: " + str(result[1])
 '''
 
-thresholds = [0.6,0.7,0.8]
+thresholds = [0.7]
 init_dict = {}
 functions = {}
 functions["Linear"] = curves.linear
-init_dict["Linear"] = [2000.0,25.0]
+init_dict["Linear"] = [-1000.0,25.0]
 #functions["Quadratic"] =curves.quadratic
 #init_dict["Quadratic"] = [1000.0,25.0,5.0]
 #functions["Cubic"] = curves.cubic
 #init_dict["Cubic"] = [50.0,25.0,7.0,3.0]
 functions["Sqrt"] = curves.square_root
-init_dict["Sqrt"] = [2000.0,25.0]
+init_dict["Sqrt"] = [-100.0,25.0]
 
 #functions["Gompertz"] = curves.gom
 #init_dict["Gompertz"] = [40.0,5.0,3.5]
-options = {"method":"Nelder-Mead"}
-with open("results_partial.csv",'wb') as resultfile:
+
+with open("results_inter.csv",'wb') as resultfile:
     result_writer = csv.writer(resultfile)
     for functname,funct in functions.items():
         print functname
+        constr_inc = lambda coef: align.strictly_increasing(funct,times_uniq,coef)
+        constr_inc_dict = {"type":"ineq","fun":constr_inc}
+        constr_half = lambda coef: align.within_halfbounds(funct,times_uniq, htimes_uniq,coef)
+        constr_half_dict = {"type":"ineq","fun":constr_half}
+        options = {"method":"COBYLA","constraints":[constr_inc_dict,constr_half_dict]}
         init = init_dict[functname]
         for thresh in thresholds:
             print thresh
+
+            boundz = ((-3000,3000),(1,150))
             count_spearman = lambda ref_times, ref_expression, spline: \
             align.count_above(ref_times,ref_expression,spline,align.curve_spearman, thresh)
-            error_fun_spearman_count = lambda a: -1.0 * align.error_function_summarize(funct,
+            conds = [constr_inc, constr_half]
+            error_fun_spearman_count = lambda a: -1.0 * align.error_function_summarize_cond(funct,
                                                                                    homolog_dict, mouse_dict,
                                                                                    count_spearman, times_uniq,
-                                                                                   spline_dict, max, weight_dict, a)
+                                                                                   spline_dict, max, weight_dict,conds, a)
 
-            result = optimize.basinhopping(error_fun_spearman_count,init, minimizer_kwargs=options)
-            result_writer.writerow([functname,"spearman",thresh,result.x,error_fun_spearman_count(result.x) ])
+            #result = optimize.basinhopping(error_fun_spearman_count,init,T=5000, minimizer_kwargs=options)
+            result = optimize.brute(func=error_fun_spearman_count,ranges=boundz, Ns=1000)
+            #result_writer.writerow([functname,"spearman",thresh,result.x,error_fun_spearman_count(result.x) ])
 
 
 
             print "spearman"
-            print result.x
-            print error_fun_spearman_count(result.x)
+            print result
+            #print result.x
+            #print error_fun_spearman_count(result.x)
             count_pearson =  lambda ref_times, ref_expression, spline: \
             align.count_above(ref_times,ref_expression,spline,align.curve_pearson, thresh)
-            error_fun_pearson_count = lambda a: -1.0 * align.error_function_summarize(funct,
+            error_fun_pearson_count = lambda a: -1.0 * align.error_function_summarize_cond(funct,
                                                                                    homolog_dict, mouse_dict,
                                                                                    count_spearman, times_uniq,
-                                                                                   spline_dict, max, weight_dict, a)
-            result = optimize.basinhopping(error_fun_pearson_count,init, minimizer_kwargs=options)
+                                                                                   spline_dict, max, weight_dict,conds, a)
+            #result = optimize.basinhopping(error_fun_pearson_count,init,T=5000, minimizer_kwargs=options)
 
-            result_writer.writerow([functname,"pearson",thresh,result.x,error_fun_pearson_count(result.x) ])
+            result = optimize.brute(func=error_fun_pearson_count,ranges=boundz, Ns=1000)
+            print result
+            #result_writer.writerow([functname,"pearson",thresh,result.x,error_fun_pearson_count(result.x) ])
             print "pearson"
-            print result.x
-            print error_fun_pearson_count(result.x)
+            #print result.x
+            #print error_fun_pearson_count(result.x)

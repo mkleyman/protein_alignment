@@ -108,8 +108,47 @@ def error_function_summarize(alignment_function, homolog_dict,
     aligned_times = [alignment_function(float(time), coef) for time in times]
     #index of 0
     z_index = bisect.bisect(aligned_times,0)
-    if z_index>len(aligned_times)/2:
-        return sys.maxint
+    #if z_index>len(aligned_times)/2:
+        #return 0
+
+    # interval = [aligned_times[0],aligned_times[-1]]
+    # spline_dict = make_spline_dict(comp_table, comp_times, interval)
+    # ref_proteins = list(ref_table.index)
+    tot_error = 0
+    for protein in ref_dict:
+        add = summary_fun([dif_function(ref_times=aligned_times[z_index:],
+                                           ref_expression=list(ref_dict[protein])[z_index:],
+                                           spline=spline_dict[homolog])*weight_dict[homolog] for
+                              homolog in homolog_dict[protein]])
+        tot_error+=add
+    return tot_error
+
+def error_function_summarize_cond(alignment_function, homolog_dict,
+                   ref_dict, dif_function, times,
+                   spline_dict, summary_fun, weight_dict, conds, coef):
+    '''
+
+    :param alignment_function: function to align reference time series to the
+    comparison spline
+    :param homolog_dict:  dictionary between the reference and comparison list
+    :param ref_dict: dictionary mapping reference protein to expression values
+    :param dif_function: function to be used as the difference between 2 time series
+    :param times:  time points for reference
+    :param spline_dict: dictionary of the comparison proteins
+     and their associated splines
+    :param summary_fun: function of how to summarize error for 1-many mapping of
+    homologs between reference an comparison
+    :param coef: arguments for the dif_function
+    :return: total error
+    '''
+    if min([cond(coef) for cond in conds])<0:
+        #print "hello"
+        return 0
+    aligned_times = [alignment_function(float(time), coef) for time in times]
+    #index of 0
+    z_index = bisect.bisect(aligned_times,0)
+    #if z_index>len(aligned_times)/2:
+        #return 0
 
     # interval = [aligned_times[0],aligned_times[-1]]
     # spline_dict = make_spline_dict(comp_table, comp_times, interval)
@@ -302,5 +341,29 @@ def make_ref_dict(ref_table,times, avg_function):
     for protein in ref_proteins:
         ref_dict[protein] = avg_function(times,list(ref_table.loc[protein]))
     return ref_dict
+
+def within_halfbounds(funct,reference_times,comp_times,coef):
+    start = funct(reference_times[0], coef)
+    end = funct(reference_times[-1], coef)
+    #print end
+    #print comp_times[-1]
+    overlap =getOverlap([start,end], [comp_times[0],comp_times[-1]])
+    if overlap>((start-end)/2.0) and overlap>((comp_times[-1]-comp_times[0])/2.0):
+        return 1.0
+    else:
+        return -1.0
+
+
+def getOverlap(a, b):
+    return max(0, min(a[1], b[1]) - max(a[0], b[0]))
+
+def strictly_increasing(funct,ref_times,coef):
+    L = [funct(time,coef) for time in ref_times]
+    if all(x<=y for x, y in zip(L, L[1:])):
+        return 1
+    else:
+        return -1
+
+
 
 
