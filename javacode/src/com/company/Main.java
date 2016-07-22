@@ -32,9 +32,13 @@ public class Main {
             CommandLineParser parser = new DefaultParser();
             CommandLine cmd = parser.parse(options,args);
             String ref = cmd.getOptionValue("r");
+            System.out.println(ref);
             String comp = cmd.getOptionValue("c");
+            System.out.println(comp);
             String outfile = cmd.getOptionValue("o");
+            System.out.println(outfile);
             String homolog = cmd.getOptionValue("h");
+            System.out.println(homolog);
             if(cmd.getOptionValue("f").equalsIgnoreCase("fdr")){
                 FDRMain.run(ref,comp,outfile,homolog);
             }
