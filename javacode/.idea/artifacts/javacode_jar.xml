@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="javacode:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/javacode_jar</output-path>
+    <root id="archive" name="javacode.jar">
+      <element id="module-output" name="javacode" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../commons-math3-3.6-bin/commons-math3-3.6/commons-math3-3.6.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../commons-math3-3.6-bin/commons-math3-3.6/commons-math3-3.6-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/guava-19.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
