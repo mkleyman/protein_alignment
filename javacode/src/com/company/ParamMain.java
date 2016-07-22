@@ -14,13 +14,10 @@ import java.util.Set;
 
 public class ParamMain {
 
-    public static void main(String[] args){
+    public static void run(String mouse, String human, String result_file, String homologs){
 
         try{
-            String human = "../processed/human_proteins.csv";
-            String mouse = "../processed/mouse_proteins.csv";
-            String result_file = "../processed/java_results.csv";
-            String homologs = "../raw_data/HOM_MouseHumanSequence.rpt";
+
             TreeBasedTable human_table = ProteinExpressionParser.parseFile(human);
             System.out.println(human_table.rowKeySet().size());
             System.out.println(human_table.columnKeySet().toString());
