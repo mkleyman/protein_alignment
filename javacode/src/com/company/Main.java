@@ -24,7 +24,7 @@ public class Main {
 
         try{
             Options options = new Options();
-            options.addOption("f", "Function");
+            options.addOption("f", "function");
             options.addOption("r", "reference file");
             options.addOption("c", "comparison file");
             options.addOption("o", "output file or folder");
@@ -32,7 +32,7 @@ public class Main {
             CommandLineParser parser = new DefaultParser();
             CommandLine cmd = parser.parse(options,args);
             String ref = cmd.getOptionValue("r");
-            String comp = cmd.getOptionValue("comp");
+            String comp = cmd.getOptionValue("c");
             String outfile = cmd.getOptionValue("o");
             String homolog = cmd.getOptionValue("h");
             if(cmd.getOptionValue("f").equalsIgnoreCase("fdr")){
