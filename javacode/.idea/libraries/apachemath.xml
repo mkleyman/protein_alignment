@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="apachemath">
+    <CLASSES />
+    <JAVADOC>
+      <root url="file://$PROJECT_DIR$/../../commons-math3-3.6-bin/commons-math3-3.6/docs/apidocs" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>

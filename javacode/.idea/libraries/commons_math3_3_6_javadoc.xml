@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="commons-math3-3.6-javadoc">
+    <CLASSES />
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/../../commons-math3-3.6-bin/commons-math3-3.6/commons-math3-3.6-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>
