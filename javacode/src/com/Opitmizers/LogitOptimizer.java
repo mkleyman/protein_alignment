@@ -22,9 +22,12 @@ public class LogitOptimizer implements Optimizer {
         double opt_val;
         double max = Double.NEGATIVE_INFINITY;
         double[] params = {-3000,2000,1,47,47,100};
-        for(double b = params[0]; b<params[1]; b+=((params[0]+params[1])/10.0)){
-            for(double m = params[2]; m<params[3]; m+= ((params[2]+params[3])/10.0)){
-                for(double a=m+params[4];a<params[5]; a+= ((params[4]+params[5])/10.0)) {
+        double first_split = (params[1]-params[0])/100.0;
+        double second_split = (params[3]-params[2])/100.0;
+        double third_split = (params[5]-params[4])/100.0;
+        for(double b = params[0]; b<params[1]; b+=first_split){
+            for(double m = params[2]; m<params[3]; m+= (second_split)){
+                for(double a=m+params[4];a<params[5]; a+= third_split) {
                     LogitTransform poly = new LogitTransform (b,m,a);
                     opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
                     if (opt_val > max) {

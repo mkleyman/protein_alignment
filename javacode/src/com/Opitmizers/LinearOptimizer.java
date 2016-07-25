@@ -24,8 +24,10 @@ public class LinearOptimizer implements Optimizer {
         double opt_val;
         double max = Double.NEGATIVE_INFINITY;
         double[] params = {-3000.0,2000.0,0.2,60.0};
-        for(double b = params[0]; b<params[1]; b+=((params[0]+params[1])/50.0)){
-            for(double m = params[2]; m<params[3]; m+= ((params[2]+params[3])/50.0)){
+        double first_split = (params[1]-params[0])/500.0;
+        double second_split = (params[3]-params[2])/500.0;
+        for(double b = params[0]; b<params[1]; b+=first_split){
+            for(double m = params[2]; m<params[3]; m+= (second_split)){
                 attempt = new double[]{b,m};
                 PolynomialFunction poly = new PolynomialFunction(attempt);
                 opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);

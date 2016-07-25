@@ -13,15 +13,12 @@ import org.apache.commons.math3.analysis.interpolation.AkimaSplineInterpolator;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args){
-
+        System.out.println(Arrays.toString(args));
         try{
             Options options = new Options();
             options.addOption("f", "function");

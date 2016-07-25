@@ -22,8 +22,10 @@ public class LogarithmOptimizer implements Optimizer {
         double opt_val;
         double max = Double.NEGATIVE_INFINITY;
         double[] params = {-3000,2000,1.0,3500};
-        for(double b = params[0]; b<params[1]; b+=((params[0]+params[1])/50.0)){
-            for(double m = params[2]; m<params[3]; m+= ((params[2]+params[3])/50.0)){
+        double first_split = (params[1]-params[0])/500.0;
+        double second_split = (params[3]-params[2])/500.0;
+        for(double b = params[0]; b<params[1]; b+=first_split){
+            for(double m = params[2]; m<params[3]; m+= (second_split)){
                 LogarithmTransform poly = new LogarithmTransform(b,m);
                 opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
                 if (opt_val>max){

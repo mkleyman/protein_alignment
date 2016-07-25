@@ -19,10 +19,14 @@ public class CubicOptmizer implements Optimizer {
         double opt_val;
         double max = Double.NEGATIVE_INFINITY;
         double[] params = {-3000,2000,-180,180,-30,30,-7.0,7.0};
-        for(double b = params[0]; b<params[1]; b+=((params[0]+params[1])/10.0)){
-            for(double m = params[2]; m<params[3]; m+= ((params[2]+params[3])/10.0)){
-                for(double a=m+params[4];a<params[5]; a+= ((params[4]+params[5])/10.0)) {
-                    for(double c=params[6];a<params[7]; a+= ((params[6]+params[7])/10.0)) {
+        double first_split = (params[1]-params[0])/100;
+        double second_split = (params[3]-params[2])/100.0;
+        double third_split =  (params[5]-params[4])/100.0;
+        double fourth_split = (params[7]-params[6])/100.0;
+        for(double b = params[0]; b<params[1]; b+=first_split){
+            for(double m = params[2]; m<params[3]; m+= (second_split)){
+                for(double a=params[4];a<params[5]; a+= third_split) {
+                    for(double c=params[6];a<params[7]; a+= fourth_split) {
                         attempt = new double[]{b, m, a, c};
                         PolynomialFunction poly = new PolynomialFunction(attempt);
                         opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
