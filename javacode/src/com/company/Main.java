@@ -1,16 +1,11 @@
 package com.company;
 
-import com.Opitmizers.*;
-import com.google.common.collect.TreeBasedTable;
-import com.google.common.primitives.Doubles;
-import com.parsers.HomologParser;
 import com.parsers.ProteinExpressionParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
-import org.apache.commons.math3.analysis.interpolation.AkimaSplineInterpolator;
-import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
+
 
 import java.io.File;
 import java.util.*;

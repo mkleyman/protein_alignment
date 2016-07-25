@@ -48,19 +48,26 @@ public class FDRMain {
             //LinearOptimizer linear = new LinearOptimizer();
             LinkedHashMap<File, Optimizer> optMap = new LinkedHashMap<File, Optimizer>();
             File sqrtFile = new File(out+"/sqrt.csv");
+            sqrtFile.createNewFile();
             optMap.put(sqrtFile, new SqrtOptimizer());
             File quadFile = new File(out+"/quadratic.csv");
+            quadFile.createNewFile();
             optMap.put(quadFile,new QuadraticOptimizer());
             File logitFile = new File(out+"/logit.csv");
+            logitFile.createNewFile();
             optMap.put(logitFile,new LogitOptimizer());
             File logFile = new File(out+"/logarithm.csv");
+            logFile.createNewFile();
             optMap.put(logFile, new LogarithmOptimizer());
             File linear = new File(out+"/linear.csv");
+            linear.createNewFile();
             optMap.put(linear, new LinearOptimizer());
             File expFile = new File(out+"/exp.csv");
+            expFile.createNewFile();
             optMap.put(expFile, new ExponentialOptimizer());
-            File cubicFile = new File(out+"/cubic.csv");
-            optMap.put(cubicFile,new CubicOptmizer());
+            //File cubicFile = new File(out+"/cubic.csv");
+            //cubicFile.createNewFile();
+            //optMap.put(cubicFile,new CubicOptmizer());
             FDRCalculator.calculateAllFDR(optMap,new double[]{0.6,0.7,0.8},aligner,human_table,
                     new AkimaSplineInterpolator(), human_proteins, 500);
 
