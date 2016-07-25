@@ -46,7 +46,7 @@ public class TestMain {
             //double[] compBounds =  {compTimes[0], compTimes[compTimes.length-1]};
             Aligner aligner = new Aligner(compTimes,homologMap.keySet(), homologMap, refTimes,mouse_table,
                     checkTimes);
-            Optimizer opt = new LinearOptimizer();
+            Optimizer opt = new LogitOptimizer();
             double[] result= opt.optimizePearson(aligner, spDict, 0.6);
             System.out.println(Doubles.join(",", result));
 
