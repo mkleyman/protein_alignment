@@ -23,7 +23,7 @@ public class QuadraticOptimizer implements Optimizer {
         double[] attempt;
         double opt_val;
         double max = Double.NEGATIVE_INFINITY;
-        double[] params = {-3000,2000,-60,60,-10,10};
+        double[] params = {-3000,2000,-60,180,-10,10};
         double first_split = (params[1]-params[0])/500;
         double second_split = (params[3]-params[2])/500.0;
         double third_split =  (params[5]-params[4])/500.0;

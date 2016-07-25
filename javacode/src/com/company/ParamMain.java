@@ -47,9 +47,10 @@ public class ParamMain {
             optList.add(new LinearOptimizer());
             optList.add(new LogarithmOptimizer());
             optList.add(new SqrtOptimizer());
-            optList.add(new LogitOptimizer());
+            //optList.add(new LogitOptimizer());
             optList.add(new QuadraticOptimizer());
-            optList.add(new CubicOptmizer());
+            //optList.add(new CubicOptmizer());
+            optList.add(new ExponentialOptimizer());
             ParameterSearch parSearch = new ParameterSearch(aligner, spDict, new double[]{0.6,0.7,0.8},optList);
             parSearch.recordResults(result_file);
            // Aligner.setCompTimes(compBounds);

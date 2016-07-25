@@ -23,7 +23,7 @@ public class SqrtOptimizer implements Optimizer{
         double[] best = {0.0, 0.0};
         double opt_val;
         double max = Double.NEGATIVE_INFINITY;
-        double[] params = {-3000,2000,0.1,1000};
+        double[] params = {-3000,2000,0.1,3000};
         double first_split = (params[1]-params[0])/500.0;
         double second_split = (params[3]-params[2])/500.0;
         for(double b = params[0]; b<params[1]; b+=first_split){

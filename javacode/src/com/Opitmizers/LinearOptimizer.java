@@ -23,7 +23,7 @@ public class LinearOptimizer implements Optimizer {
         double[] attempt;
         double opt_val;
         double max = Double.NEGATIVE_INFINITY;
-        double[] params = {-3000.0,2000.0,0.2,60.0};
+        double[] params = {-3000.0,2000.0,0.2,180.0};
         double first_split = (params[1]-params[0])/500.0;
         double second_split = (params[3]-params[2])/500.0;
         for(double b = params[0]; b<params[1]; b+=first_split){
