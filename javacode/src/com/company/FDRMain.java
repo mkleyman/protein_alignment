@@ -44,18 +44,17 @@ public class FDRMain {
             //double[] compBounds =  {compTimes[0], compTimes[compTimes.length-1]};
             Aligner aligner = new Aligner(compTimes,homologMap.keySet(), homologMap, refTimes,mouse_table,
                     checkTimes);
-           // Aligner.setCompTimes(compBounds);
-            //LinearOptimizer linear = new LinearOptimizer();
+
             LinkedHashMap<File, Optimizer> optMap = new LinkedHashMap<File, Optimizer>();
-            File sqrtFile = new File(out+"/sqrt.csv");
-            sqrtFile.createNewFile();
-            optMap.put(sqrtFile, new SqrtOptimizer());
+            //File sqrtFile = new File(out+"/sqrt.csv");
+            //sqrtFile.createNewFile();
+            //optMap.put(sqrtFile, new SqrtOptimizer());
             File quadFile = new File(out+"/quadratic.csv");
             quadFile.createNewFile();
             optMap.put(quadFile,new QuadraticOptimizer());
-            File logitFile = new File(out+"/logit.csv");
-            logitFile.createNewFile();
-            optMap.put(logitFile,new LogitOptimizer());
+            //File logitFile = new File(out+"/logit.csv");
+            //logitFile.createNewFile();
+            //optMap.put(logitFile,new LogitOptimizer());
             File logFile = new File(out+"/logarithm.csv");
             logFile.createNewFile();
             optMap.put(logFile, new LogarithmOptimizer());

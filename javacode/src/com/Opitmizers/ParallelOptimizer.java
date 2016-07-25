@@ -31,7 +31,7 @@ public class ParallelOptimizer implements Runnable {
         double[] result = opt.optimizePearson(this.aligner, this.splineDict, this.threshold);
         synchronized (this.outFile){
             try {
-                Files.append(Doubles.join(",", result), this.outFile, Charset.defaultCharset());
+                Files.append(Doubles.join(",", result)+"\n", this.outFile, Charset.defaultCharset());
             }catch(Exception e){
                 e.printStackTrace();
             }

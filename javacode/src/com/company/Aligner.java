@@ -106,10 +106,9 @@ public class Aligner {
         return total;
     }
 
-    public Set<String> align_polynomial_pearson_set(SplineDictionary splineDict, double[] parameters
+    public Set<String> align_pearson_set(SplineDictionary splineDict, UnivariateFunction poly
             , double threshold){
         HashSet<String>  passList = new HashSet<>();
-        PolynomialFunction poly = new PolynomialFunction(parameters);
         double total = 0.0;
         double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
         //create time surface
