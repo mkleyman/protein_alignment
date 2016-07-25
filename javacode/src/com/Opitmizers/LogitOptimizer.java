@@ -21,7 +21,7 @@ public class LogitOptimizer implements Optimizer {
         double[] best = {0.0, 0.0, 0.0};
         double opt_val;
         double max = Double.NEGATIVE_INFINITY;
-        double[] params = {-3000,2000,1,47,47,100};
+        double[] params = {-3000,2000,1,16,47,100};
         double first_split = (params[1]-params[0])/100.0;
         double second_split = (params[3]-params[2])/100.0;
         double third_split = (params[5]-params[4])/100.0;

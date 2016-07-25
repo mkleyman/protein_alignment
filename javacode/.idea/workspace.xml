@@ -28,11 +28,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="LogitOptimizer.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="LogitOptimizer.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/Opitmizers/LogitOptimizer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="29" column="69" selection-start-line="29" selection-start-column="69" selection-end-line="29" selection-end-column="69" />
+            <state vertical-scroll-proportion="0.24635036">
+              <caret line="25" column="12" selection-start-line="25" selection-start-column="12" selection-end-line="25" selection-end-column="12" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -50,10 +50,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/company/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.35948905">
+            <state vertical-scroll-proportion="0.0">
               <caret line="27" column="39" selection-start-line="27" selection-start-column="39" selection-end-line="27" selection-end-column="39" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -184,10 +184,10 @@
         <option value="$PROJECT_DIR$/src/com/Opitmizers/LinearOptimizer.java" />
         <option value="$PROJECT_DIR$/src/com/Opitmizers/LogarithmOptimizer.java" />
         <option value="$PROJECT_DIR$/src/com/Opitmizers/SqrtOptimizer.java" />
-        <option value="$PROJECT_DIR$/src/com/Opitmizers/LogitOptimizer.java" />
         <option value="$PROJECT_DIR$/src/com/Opitmizers/CubicOptmizer.java" />
         <option value="$PROJECT_DIR$/src/com/Opitmizers/QuadraticOptimizer.java" />
         <option value="$PROJECT_DIR$/src/com/company/Main.java" />
+        <option value="$PROJECT_DIR$/src/com/Opitmizers/LogitOptimizer.java" />
       </list>
     </option>
   </component>
@@ -685,12 +685,12 @@
       <workItem from="1468606819512" duration="9433000" />
       <workItem from="1468878383536" duration="58144000" />
       <workItem from="1469218994398" duration="5949000" />
-      <workItem from="1469228629070" duration="5503000" />
+      <workItem from="1469228629070" duration="6202000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="79029000" />
+    <option name="totallyTimeSpent" value="79728000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-11" y="-11" width="1942" height="1042" extended-state="6" />
@@ -1134,16 +1134,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/Opitmizers/LogitOptimizer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="29" column="69" selection-start-line="29" selection-start-column="69" selection-end-line="29" selection-end-column="69" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/Opitmizers/LogarithmOptimizer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1194,8 +1184,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/company/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.35948905">
+        <state vertical-scroll-proportion="0.0">
           <caret line="27" column="39" selection-start-line="27" selection-start-column="39" selection-end-line="27" selection-end-column="39" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/Opitmizers/LogitOptimizer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.24635036">
+          <caret line="25" column="12" selection-start-line="25" selection-start-column="12" selection-end-line="25" selection-end-column="12" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
