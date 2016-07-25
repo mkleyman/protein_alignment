@@ -21,11 +21,11 @@ public class Main {
         System.out.println(Arrays.toString(args));
         try{
             Options options = new Options();
-            options.addOption("f", "function");
-            options.addOption("r", "reference file");
-            options.addOption("c", "comparison file");
-            options.addOption("o", "output file or folder");
-            options.addOption("h", "homolog file");
+            options.addOption("f",true, "function");
+            options.addOption("r",true, "reference file");
+            options.addOption("c",true, "comparison file");
+            options.addOption("o",true, "output file or folder");
+            options.addOption("h",true, "homolog file");
             CommandLineParser parser = new DefaultParser();
             CommandLine cmd = parser.parse(options,args);
             String ref = cmd.getOptionValue("r");
