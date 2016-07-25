@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -21,11 +22,20 @@ public class ResultParser {
     public static void createTable(String resultFile, String tableFile,
                                    double start, double stop, double increment) throws IOException {
         Scanner scan = new Scanner(new File(resultFile));
-        FileWriter fwriter = new FileWriter(new File(tableFile));
+        File table =  new File(tableFile);
+        table.createNewFile();
+        FileWriter fwriter = new FileWriter(table);
         while(scan.hasNext()){
             String[] row = scan.nextLine().split(",");
             UnivariateFunction funct = rowToFunction(row);
             for(double i=start;i<stop;i+=increment){
+                System.out.println(row[0]);
+                System.out.println(i);
+                if(funct instanceof PolynomialFunction){
+                    PolynomialFunction x = (PolynomialFunction)funct;
+                    System.out.println(Arrays.toString(x.getCoefficients()));
+                }
+                System.out.println(funct.value(i)/365.0);
                 String[] tableRow = {row[0],row[1],row[2],Double.toString(i), Double.toString(funct.value(i))};
                 fwriter.write(String.join(",", tableRow)+"\n");
             }
@@ -65,6 +75,18 @@ public class ResultParser {
 
         return null;
     }
+
+    public static void main(String[] args){
+        String resultFile = "../processed/search_results.txt";
+        String tableFile = "../processed/search_table.csv";
+        try {
+            createTable(resultFile,tableFile,16,48,0.1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 
 }

@@ -106,9 +106,9 @@ public class Aligner {
         return total;
     }
 
-    public List<String> align_polynomial_pearson_list(SplineDictionary splineDict, double[] parameters
+    public Set<String> align_polynomial_pearson_set(SplineDictionary splineDict, double[] parameters
             , double threshold){
-        LinkedList<String>  passList = new LinkedList();
+        HashSet<String>  passList = new HashSet<>();
         PolynomialFunction poly = new PolynomialFunction(parameters);
         double total = 0.0;
         double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
@@ -172,7 +172,7 @@ public class Aligner {
     }
 
     public boolean checkBounds(double[] refTimes){
-        if (!(Math.max(0.0, refTimes[0]-compTimes[0])+Math.max(0.0, compTimes[compTimes.length-1]
+        if ((Math.max(0.0, refTimes[0]-compTimes[0])+Math.max(0.0, compTimes[compTimes.length-1]
                 -refTimes[refTimes.length-1]) >= (compTimes[0]+compTimes[compTimes.length-1])/2.0)){
                 return false;
         }
