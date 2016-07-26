@@ -134,7 +134,7 @@ public class Aligner {
                 double[] compVals = Arrays.stream(transformedTimes).map(e ->
                         spline.value(e)).toArray();
                 if (pearson_threshold(refVals, compVals, threshold) >0){
-                    passList.add(protein);
+                    passList.add(this.homologDict.get(protein));
                 }
             }catch(Exception e){
                 //System.out.println(Arrays.toString(indices));

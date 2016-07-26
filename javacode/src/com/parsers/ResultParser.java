@@ -40,6 +40,7 @@ public class ResultParser {
                 fwriter.write(String.join(",", tableRow)+"\n");
             }
         }
+        scan.close();
         fwriter.close();
 
     }

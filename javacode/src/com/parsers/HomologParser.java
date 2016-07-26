@@ -28,6 +28,7 @@ public class HomologParser {
                 }
             }
         }
+        scan.close();
         for(String homolog: refMap.keySet()){
             if(compMap.containsKey(refMap.get(homolog))){
                 homologMap.put(homolog, compMap.get(refMap.get(homolog)));

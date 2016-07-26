@@ -29,9 +29,10 @@ public class ParallelOptimizer implements Runnable {
 
     public void run(){
         double[] result = opt.optimizePearson(this.aligner, this.splineDict, this.threshold);
+        String line = Doubles.join(",", result)+"\n";
         synchronized (this.outFile){
             try {
-                Files.append(Doubles.join(",", result)+"\n", this.outFile, Charset.defaultCharset());
+                Files.append(line, this.outFile, Charset.defaultCharset());
             }catch(Exception e){
                 e.printStackTrace();
             }

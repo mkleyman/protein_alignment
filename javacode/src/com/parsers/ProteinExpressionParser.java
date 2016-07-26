@@ -43,6 +43,7 @@ public class ProteinExpressionParser {
                 proteinExpression.get(row[0],times[i-1]).add(Double.parseDouble(row[i]));
             }
         }
+        scan.close();
         double[] uniqueTimes = Arrays.stream(times).distinct().toArray();
         //take median of table values
         Median med = new Median();
