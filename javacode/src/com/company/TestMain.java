@@ -71,6 +71,7 @@ public class TestMain {
             System.out.println(Doubles.join(",", result));
 
 
+            /*
             List<String> shuffled = new LinkedList();
             shuffled.addAll(homologMap.keySet());
             Collections.shuffle(shuffled);
@@ -88,7 +89,7 @@ public class TestMain {
                     System.out.println(line);
                 }
 
-            }
+            }*/
 
             /*
             UnivariateFunction lin = new PolynomialFunction(new double[]{-2990,96.5728});
