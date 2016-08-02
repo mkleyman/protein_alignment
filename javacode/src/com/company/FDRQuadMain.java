@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class FDRMain {
+public class FDRQuadMain {
 
     public static void run(String mouse, String human, String out, String homologs, char mode){
 
@@ -48,26 +48,14 @@ public class FDRMain {
 
             LinkedHashMap<File, Optimizer> optMap = new LinkedHashMap<File, Optimizer>();
 
-            //File quadFile = new File(out+"/quadratic.csv");
-            //quadFile.createNewFile();
-            //optMap.put(quadFile,new QuadraticOptimizer());
+            File quadFile = new File(out+"/quadratic.csv");
+            quadFile.createNewFile();
+            optMap.put(quadFile,new QuadraticOptimizer(mode));
 
-            File logFile = new File(out+"/logarithm.csv");
-            logFile.createNewFile();
-            optMap.put(logFile, new LogarithmOptimizer(mode));
-            File linear = new File(out+"/linear.csv");
-            linear.createNewFile();
-            optMap.put(linear, new LinearOptimizer(mode));
-            File expFile = new File(out+"/exp.csv");
-            expFile.createNewFile();
-            optMap.put(expFile, new ExponentialOptimizer(mode));
-
-            File sqrtFile = new File(out+"/sqrt.csv");
-            sqrtFile.createNewFile();
-            optMap.put(sqrtFile, new SqrtOptimizer(mode));
             FDRCalculator.calculateAllFDR(optMap,new double[]{0.7,0.6,0.8},aligner,human_table,
                     new AkimaSplineInterpolator(), human_proteins, 500);
 
+           // linear.optimizePearson(aligner, spDict, 0.8);
 
 
 

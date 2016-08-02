@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class ParamMain {
 
-    public static void run(String mouse, String human, String result_file, String homologs){
+    public static void run(String mouse, String human, String result_file, String homologs, char mode){
 
         try{
 
@@ -41,16 +41,18 @@ public class ParamMain {
 
             }
             //double[] compBounds =  {compTimes[0], compTimes[compTimes.length-1]};
+            SplineDictionary refDict = new SplineDictionary(mouse_table, new AkimaSplineInterpolator(),
+                    homologMap.keySet());
             Aligner aligner = new Aligner(compTimes,homologMap.keySet(), homologMap, refTimes,mouse_table,
-                    checkTimes);
+                    checkTimes,refDict);
             LinkedList<Optimizer> optList = new LinkedList<>();
-            optList.add(new LinearOptimizer());
-            optList.add(new LogarithmOptimizer());
-            optList.add(new SqrtOptimizer());
+            optList.add(new LinearOptimizer(mode));
+            optList.add(new LogarithmOptimizer(mode));
+            optList.add(new SqrtOptimizer(mode));
             //optList.add(new LogitOptimizer());
-            optList.add(new QuadraticOptimizer());
+            optList.add(new QuadraticOptimizer(mode));
             //optList.add(new CubicOptmizer());
-            optList.add(new ExponentialOptimizer());
+            optList.add(new ExponentialOptimizer(mode));
             ParameterSearch parSearch = new ParameterSearch(aligner, spDict, new double[]{0.6,0.7,0.8},optList);
             parSearch.recordResults(result_file);
            // Aligner.setCompTimes(compBounds);

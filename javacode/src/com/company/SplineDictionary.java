@@ -3,9 +3,12 @@ package com.company;
 import com.google.common.collect.TreeBasedTable;
 import com.google.common.primitives.Doubles;
 import org.apache.commons.math3.analysis.interpolation.AkimaSplineInterpolator;
-import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
-import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+import umontreal.ssj.functionfit.SmoothingCubicSpline;
+import umontreal.ssj.functions.MathFunction;
+
+
+import javax.script.*;
 
 import java.util.*;
 
@@ -15,7 +18,7 @@ import java.util.*;
 public class SplineDictionary {
 
 
-    private Map<String, PolynomialSplineFunction> splineDict;
+    private Map<String,MathFunction> splineDict;
 
     public SplineDictionary(TreeBasedTable<String,Double,Double> expressionTable, AkimaSplineInterpolator splineMaker,
                             Set<String> proteinSet ){
@@ -24,7 +27,10 @@ public class SplineDictionary {
         for(String row: expressionTable.rowKeySet()){
             if(proteinSet.contains(row)) {
                 double[] expressionVals = Doubles.toArray(expressionTable.row(row).values());
-                splineDict.put(row, splineMaker.interpolate(times, expressionVals));
+                //SmoothingCubicSpline scs = new SmoothingCubicSpline(times,expressionVals,20);
+                splineDict.put(row, new SmoothingCubicSpline(times,expressionVals, 0.05));
+
+                //System.out.println(splineDict.get(row).getKnots().length);
             }
         }
     }
@@ -33,21 +39,27 @@ public class SplineDictionary {
                             AkimaSplineInterpolator splineMaker, Set<String> proteinSet, long rand){
         this.splineDict = new HashMap<>();
         double[] times = Doubles.toArray(expressionTable.columnKeySet());
+
+
+
+
         for(String row: expressionTable.rowKeySet()){
             if(proteinSet.contains(row)) {
-                List<Double> randomExpressions = new ArrayList<Double>(expressionTable.row(row).size());
+                List<Double> randomExpressions = new ArrayList<>(expressionTable.row(row).size());
                 randomExpressions.addAll(expressionTable.row(row).values());
                 Collections.shuffle(randomExpressions, new Random(rand));
                 double[] expressionVals = Doubles.toArray(randomExpressions);
-                this.splineDict.put(row, splineMaker.interpolate(times, expressionVals));
+                this.splineDict.put(row, new SmoothingCubicSpline(times,expressionVals,0.05));
             }
         }
     }
 
-    public PolynomialSplineFunction getSpline(String homolog){
+    public MathFunction getSpline(String homolog){
         if(this.splineDict.containsKey(homolog)){
             return this.splineDict.get(homolog);
         }
         else return null;
     }
+
+
 }

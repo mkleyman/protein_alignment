@@ -13,6 +13,18 @@ import java.util.Arrays;
 public class SqrtOptimizer implements Optimizer{
 
     public static String name = "Sqrt";
+    private char mode = 'p';
+
+    public SqrtOptimizer(){
+        this.mode = 'p';
+    }
+
+    public SqrtOptimizer(char mode){
+        this.mode = mode;
+    }
+    public void setMode(char mode){
+        this.mode = mode;
+    }
 
     public String getName() {
         return name;
@@ -29,7 +41,16 @@ public class SqrtOptimizer implements Optimizer{
         for(double b = params[0]; b<params[1]; b+=first_split){
             for(double m = params[2]; m<params[3]; m+= (second_split)){
                 SqrtTransform poly = new SqrtTransform(b,m);
-                opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
+                if(mode=='a' ) {
+                    opt_val = aligner.align_polynomial_pearson_all(splineDict,poly, threshold);
+                }
+                else if(mode=='d'){
+                    opt_val = aligner.align_polynomial_difference(splineDict,poly,threshold);
+                }
+
+                else{
+                    opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
+                }
                 if (opt_val>max){
                     max = opt_val;
                     best = new double[]{b,m};

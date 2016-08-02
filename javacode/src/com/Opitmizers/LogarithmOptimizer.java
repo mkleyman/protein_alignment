@@ -12,6 +12,19 @@ import java.util.Arrays;
  */
 public class LogarithmOptimizer implements Optimizer {
     public static String name = "Log";
+    private char mode ;
+
+    public LogarithmOptimizer(){
+        this.mode = 'p';
+    }
+
+    public LogarithmOptimizer(char mode){
+        this.mode = mode;
+    }
+
+    public void setMode(char mode){
+        this.mode = mode;
+    }
 
     public String getName() {
         return name;
@@ -27,7 +40,16 @@ public class LogarithmOptimizer implements Optimizer {
         for(double b = params[0]; b<params[1]; b+=first_split){
             for(double m = params[2]; m<params[3]; m+= (second_split)){
                 LogarithmTransform poly = new LogarithmTransform(b,m);
-                opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
+                if(mode=='a' ) {
+                    opt_val = aligner.align_polynomial_pearson_all(splineDict,poly, threshold);
+                }
+                else if(mode=='d'){
+                    opt_val = aligner.align_polynomial_difference(splineDict,poly,threshold);
+                }
+
+                else{
+                    opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
+                }
                 if (opt_val>max){
                     max = opt_val;
                     best = new double[]{b,m};

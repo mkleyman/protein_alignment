@@ -12,6 +12,19 @@ import java.util.Arrays;
  */
 public class LinearOptimizer implements Optimizer {
     public static String name = "Linear";
+    private char mode ;
+
+    public LinearOptimizer(){
+        this.mode = 'p';
+    }
+
+    public LinearOptimizer(char mode){
+        this.mode = mode;
+    }
+
+    public void setMode(char mode){
+        this.mode = mode;
+    }
 
     public String getName() {
         return name;
@@ -30,7 +43,16 @@ public class LinearOptimizer implements Optimizer {
             for(double m = params[2]; m<params[3]; m+= (second_split)){
                 attempt = new double[]{b,m};
                 PolynomialFunction poly = new PolynomialFunction(attempt);
-                opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
+                if(mode=='a' ) {
+                    opt_val = aligner.align_polynomial_pearson_all(splineDict,poly, threshold);
+                }
+                else if(mode=='d'){
+                    opt_val = aligner.align_polynomial_difference(splineDict,poly,threshold);
+                }
+
+                else{
+                    opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
+                }
                 if (opt_val>max){
                     max = opt_val;
                     best = attempt;

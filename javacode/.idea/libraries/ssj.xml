@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="ssj">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Downloads/ssj-3.0.0-rc1.zip!/ssj-3.0.0-rc1/doc/examples/charts" />
+      <root url="jar://$USER_HOME$/Downloads/ssj-3.0.0-rc1.zip!/ssj-3.0.0-rc1/doc/examples/probdistmulti/norta" />
+      <root url="jar://$USER_HOME$/Downloads/ssj-3.0.0-rc1.zip!/ssj-3.0.0-rc1/doc/examples/randvar" />
+      <root url="jar://$USER_HOME$/Downloads/ssj-3.0.0-rc1.zip!/ssj-3.0.0-rc1/doc/examples/tutorial" />
+    </SOURCES>
+  </library>
+</component>

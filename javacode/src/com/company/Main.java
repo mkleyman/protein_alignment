@@ -21,6 +21,7 @@ public class Main {
             options.addOption("c",true, "comparison file");
             options.addOption("o",true, "output file or folder");
             options.addOption("h",true, "homolog file");
+            //options.addOption("m",true, "mode");
             CommandLineParser parser = new DefaultParser();
             CommandLine cmd = parser.parse(options,args);
             String ref = cmd.getOptionValue("r");
@@ -31,11 +32,16 @@ public class Main {
             System.out.println(outfile);
             String homolog = cmd.getOptionValue("h");
             System.out.println(homolog);
-            if(cmd.getOptionValue("f").equalsIgnoreCase("fdr")){
-                FDRMain.run(ref,comp,outfile,homolog);
+            char mode = 'p';
+            System.out.println(mode);
+            if(cmd.getOptionValue("f").equalsIgnoreCase("fdr")) {
+                FDRMain.run(ref, comp, outfile, homolog, mode);
             }
+            else if(cmd.getOptionValue("f").equalsIgnoreCase("fdrq")){
+                    FDRMain.run(ref,comp,outfile,homolog,mode);
+                }
             else{
-                ParamMain.run(ref,comp,outfile,homolog);
+                ParamMain.run(ref, comp, outfile, homolog, mode);
             }
 
 

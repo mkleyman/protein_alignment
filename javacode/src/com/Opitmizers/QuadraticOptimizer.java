@@ -12,6 +12,19 @@ import java.util.Arrays;
  */
 public class QuadraticOptimizer implements Optimizer {
     public static String name = "Quadratic";
+    private char mode ;
+
+    public QuadraticOptimizer(){
+        this.mode = 'p';
+    }
+
+    public QuadraticOptimizer(char mode){
+        this.mode = mode;
+    }
+
+    public void setMode(char mode){
+        this.mode = mode;
+    }
 
     public String getName() {
         return name;
@@ -32,7 +45,16 @@ public class QuadraticOptimizer implements Optimizer {
                 for(double a=params[4];a<params[5]; a+= third_split) {
                     attempt = new double[]{b, m, a};
                     PolynomialFunction poly = new PolynomialFunction(attempt);
-                    opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
+                    if(mode=='a' ) {
+                        opt_val = aligner.align_polynomial_pearson_all(splineDict,poly, threshold);
+                    }
+                    else if(mode=='d'){
+                        opt_val = aligner.align_polynomial_difference(splineDict,poly,threshold);
+                    }
+
+                    else{
+                        opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
+                    }
                     if (opt_val > max) {
                         max = opt_val;
                         best = attempt;

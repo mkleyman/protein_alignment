@@ -8,6 +8,9 @@ import com.company.SplineDictionary;
  */
 public interface Optimizer {
 
+
+    void setMode(char mode);
+
     double[] optimizePearson(Aligner aligner, SplineDictionary splineDict,
                                            double threshold);
     String getName();

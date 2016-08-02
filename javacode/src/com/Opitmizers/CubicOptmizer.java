@@ -11,6 +11,24 @@ import java.util.Arrays;
  */
 public class CubicOptmizer implements Optimizer {
     public static String name = "Cubic";
+    private char mode;
+
+    public void setMode(char mode){
+        this.mode = mode;
+    }
+
+    public CubicOptmizer(){
+        this.mode = 'p';
+    }
+
+    public CubicOptmizer(char mode){
+        this.mode = mode;
+    }
+
+
+
+
+
 
     public double[] optimizePearson(Aligner aligner, SplineDictionary splineDict,
                                     double threshold){
@@ -29,7 +47,17 @@ public class CubicOptmizer implements Optimizer {
                     for(double c=params[6];a<params[7]; a+= fourth_split) {
                         attempt = new double[]{b, m, a, c};
                         PolynomialFunction poly = new PolynomialFunction(attempt);
-                        opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
+                        if(mode=='a' ) {
+                            opt_val = aligner.align_polynomial_pearson_all(splineDict,poly, threshold);
+                        }
+                        else if(mode=='d'){
+                            opt_val = aligner.align_polynomial_difference(splineDict,poly,threshold);
+                        }
+
+                        else{
+                            opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
+                        }
+
                         if (opt_val > max) {
                             max = opt_val;
                             best = attempt;
