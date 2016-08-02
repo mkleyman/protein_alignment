@@ -28,7 +28,7 @@ public class SplineDictionary {
             if(proteinSet.contains(row)) {
                 double[] expressionVals = Doubles.toArray(expressionTable.row(row).values());
                 //SmoothingCubicSpline scs = new SmoothingCubicSpline(times,expressionVals,20);
-                splineDict.put(row, new SmoothingCubicSpline(times,expressionVals, 0.05));
+                splineDict.put(row, new SmoothingCubicSpline(times,expressionVals, 0.1));
 
                 //System.out.println(splineDict.get(row).getKnots().length);
             }
@@ -49,7 +49,7 @@ public class SplineDictionary {
                 randomExpressions.addAll(expressionTable.row(row).values());
                 Collections.shuffle(randomExpressions, new Random(rand));
                 double[] expressionVals = Doubles.toArray(randomExpressions);
-                this.splineDict.put(row, new SmoothingCubicSpline(times,expressionVals,0.05));
+                this.splineDict.put(row, new SmoothingCubicSpline(times,expressionVals,0.1));
             }
         }
     }

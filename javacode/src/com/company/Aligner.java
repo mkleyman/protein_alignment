@@ -101,7 +101,7 @@ public class Aligner {
         double[] trTimes;
         int[] indices;
         double total = 0.0;
-        double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
+
         //create time surface
         double[] sTimes = new double[testTimes.length];
         int index =0;
@@ -115,20 +115,25 @@ public class Aligner {
         if(!checkBounds(sTimes)) return Double.NEGATIVE_INFINITY;
 
         if(refDict==null){
+            double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
             indices = getBoundIndices(transformedTimes);
             trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
 
         }
         else {
-            indices = getBoundIndices(sTimes);
-            trTimes = Arrays.copyOfRange(sTimes, indices[0], indices[1]);
+            //indices = getBoundIndices(sTimes);
+            //trTimes = Arrays.copyOfRange(sTimes, indices[0], indices[1]);
+            double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
+            indices = getBoundIndices(transformedTimes);
+            trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
         }
         double[] refVals;
-        double[] mTimes = Arrays.copyOfRange(this.testTimes, indices[0], indices[1]);
+        double[] mTimes = Arrays.copyOfRange(this.times, indices[0], indices[1]);
         for(String protein:this.proteinList){
 
             if(refDict==null) {
                 refVals = Doubles.toArray(this.refTable.row(protein).values());
+                System.out.println("hello");
                 refVals = Arrays.copyOfRange(refVals,indices[0],indices[1]);
             }
             else {
@@ -151,7 +156,7 @@ public class Aligner {
         double[] trTimes;
         int[] indices;
         double total = 0.0;
-        double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
+
         //create time surface
         double[] sTimes = new double[testTimes.length];
         int index =0;
@@ -165,19 +170,25 @@ public class Aligner {
         if(!checkBounds(sTimes)) return Double.NEGATIVE_INFINITY;
 
         if(refDict==null){
+            double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
             indices = getBoundIndices(transformedTimes);
             trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
 
         }
         else {
-            indices = getBoundIndices(sTimes);
-            trTimes = Arrays.copyOfRange(sTimes, indices[0], indices[1]);
+            //indices = getBoundIndices(sTimes);
+            //trTimes = Arrays.copyOfRange(sTimes, indices[0], indices[1]);
+            double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
+            indices = getBoundIndices(transformedTimes);
+            trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
         }
         double[] refVals;
+        double[] mTimes = Arrays.copyOfRange(this.times, indices[0], indices[1]);
         for(String protein:this.proteinList){
-            double[] mTimes = Arrays.copyOfRange(this.testTimes, indices[0], indices[1]);
+
             if(refDict==null) {
                 refVals = Doubles.toArray(this.refTable.row(protein).values());
+                System.out.println("hello");
                 refVals = Arrays.copyOfRange(refVals,indices[0],indices[1]);
             }
             else {
@@ -429,15 +440,17 @@ public class Aligner {
     }
 
     public boolean checkBounds(double[] refTimes){
-        if ((Math.max(0.0, refTimes[0]-compTimes[0])+Math.max(0.0, compTimes[compTimes.length-1]
-                -refTimes[refTimes.length-1]) >= (compTimes[0]+compTimes[compTimes.length-1])*.75)){
+        if ((Math.min(refTimes[refTimes.length-1], compTimes[compTimes.length-1]
+                -Math.max(compTimes[0], refTimes[0])) >= ((compTimes[compTimes.length-1]-compTimes[0])*.5))){
                 return false;
         }
         int tot = 0;
         for(double time: refTimes){
             if(time>= compTimes[0] &&  time<= compTimes[compTimes.length-1]) tot++;
         }
-        return (tot >= (int)((double)refTimes.length)*.75);
+        //System.out.println(tot);
+        //System.out.println(((double)refTimes.length)*0.75);
+        return (tot >= (((double)refTimes.length)*0.5));
 
     }
 

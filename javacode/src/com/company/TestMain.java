@@ -63,7 +63,7 @@ public class TestMain {
                System.out.println(protein);
            }*/
 
-            Optimizer opt = new LinearOptimizer('p');
+            Optimizer opt = new LinearOptimizer('d');
             double[] randresult= opt.optimizePearson(aligner, spDictRand, 0.7);
             System.out.println(Doubles.join(",", randresult));
 
