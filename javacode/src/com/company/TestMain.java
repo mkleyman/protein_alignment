@@ -22,11 +22,12 @@ public class TestMain {
             String result_file = "../processed/java_results.csv";
             String homologs = "../raw_data/HOM_MouseHumanSequence.rpt";
             TreeBasedTable<String,Double,Double> human_table = ProteinExpressionParser.parseFile(human);
-            human_table = ProteinExpressionParser.normalize(human_table);
+
             System.out.println(human_table.rowKeySet().size());
             System.out.println(human_table.columnKeySet().toString());
             TreeBasedTable<String,Double,Double> mouse_table = ProteinExpressionParser.parseFile(mouse);
             mouse_table = ProteinExpressionParser.normalize(mouse_table);
+            human_table = ProteinExpressionParser.normalize(human_table);
             System.out.println(mouse_table.rowKeySet().size());
             System.out.println(mouse_table.columnKeySet().toString());
             Map<String,String> homologMap = HomologParser.parse(homologs,"mouse, laboratory");

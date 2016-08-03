@@ -38,7 +38,7 @@ public class Main {
                 FDRMain.run(ref, comp, outfile, homolog, mode);
             }
             else if(cmd.getOptionValue("f").equalsIgnoreCase("fdrq")){
-                    FDRMain.run(ref,comp,outfile,homolog,mode);
+                    FDRQuadMain.run(ref,comp,outfile,homolog,mode);
                 }
             else{
                 ParamMain.run(ref, comp, outfile, homolog, mode);
