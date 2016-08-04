@@ -53,7 +53,7 @@ public class FDRQuadMain {
             optMap.put(quadFile,new QuadraticOptimizer(mode));
 
             FDRCalculator.calculateAllFDR(optMap,new double[]{0.7,0.6,0.8},aligner,human_table,
-                    new AkimaSplineInterpolator(), human_proteins, 500);
+                    new AkimaSplineInterpolator(), human_proteins, 500,mouse_table,homologMap);
 
            // linear.optimizePearson(aligner, spDict, 0.8);
 

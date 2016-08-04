@@ -67,8 +67,8 @@ public class FDRMain {
             File sqrtFile = new File(out+"/sqrt.csv");
             sqrtFile.createNewFile();
             optMap.put(sqrtFile, new SqrtOptimizer(mode));
-            FDRCalculator.calculateAllFDR(optMap,new double[]{0.8},aligner,human_table,
-                    new AkimaSplineInterpolator(), human_proteins, 500);
+            FDRCalculator.calculateAllFDR(optMap,new double[]{0.7,0.8,0.6},aligner,human_table,
+                    new AkimaSplineInterpolator(), human_proteins, 500, mouse_table,homologMap);
 
 
 

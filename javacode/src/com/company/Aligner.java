@@ -1,5 +1,6 @@
 package com.company;
 
+import JavaMI.MutualInformation;
 import com.google.common.collect.Table;
 import com.google.common.primitives.Doubles;
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -19,14 +20,16 @@ import java.util.*;
  */
 public class Aligner {
     private final double[] compTimes;
-    private final Set<String> proteinList;
-    private final Map<String,String> homologDict;
+    public final Set<String> proteinList;
+    public final Map<String,String> homologDict;
     private final double[] times;
     private final double[] testTimes;
-    private final Table<String,Double,Double> refTable;
+    public final Table<String,Double,Double> refTable;
     private static PearsonsCorrelation pearson = new PearsonsCorrelation();
     private static SpearmansCorrelation spearman = new SpearmansCorrelation();
     private SplineDictionary refDict;
+    private Map<String, Double> infoMapRef;
+    private Map<String, Double> infoMapComp;
 
 
 
@@ -45,6 +48,22 @@ public class Aligner {
     }
 
     public Aligner(double[] compTimes, Set<String> proteinList, Map<String,String> homologDict,
+                   double[] times, Table<String, Double, Double> refTable, double[] testTimes,
+                   SplineDictionary refDict, Map<String,Double> informationMapRef,
+                   Map<String,Double> informationMapComp ){
+        this.compTimes= compTimes;
+        this.proteinList = proteinList;
+        this.homologDict = homologDict;
+        this.times = times;
+        this.refTable = refTable;
+        this.testTimes = testTimes;
+        this.refDict = refDict;
+        this.infoMapRef = informationMapRef;
+        this.infoMapComp = informationMapComp;
+
+    }
+
+    public Aligner(double[] compTimes, Set<String> proteinList, Map<String,String> homologDict,
                    double[] times, Table<String, Double, Double> refTable, double[] testTimes){
         this.compTimes= compTimes;
         this.proteinList = proteinList;
@@ -53,6 +72,22 @@ public class Aligner {
         this.refTable = refTable;
         this.testTimes = testTimes;
 
+
+    }
+
+
+    public Aligner(double[] compTimes, Set<String> proteinList, Map<String,String> homologDict,
+                   double[] times, Table<String, Double, Double> refTable, double[] testTimes,
+                   Map<String,Double> informationMapRef,
+                   Map<String,Double> informationMapComp ){
+        this.compTimes= compTimes;
+        this.proteinList = proteinList;
+        this.homologDict = homologDict;
+        this.times = times;
+        this.refTable = refTable;
+        this.testTimes = testTimes;
+        this.infoMapRef = informationMapRef;
+        this.infoMapComp = informationMapComp;
 
     }
 
@@ -113,22 +148,23 @@ public class Aligner {
             index++;
         }
         if(!checkBounds(sTimes)) return Double.NEGATIVE_INFINITY;
-
+        double[] mTimes;
         if(refDict==null){
             double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
             indices = getBoundIndices(transformedTimes);
             trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
+            mTimes = Arrays.copyOfRange(this.times, indices[0], indices[1]);
 
         }
         else {
-            //indices = getBoundIndices(sTimes);
-            //trTimes = Arrays.copyOfRange(sTimes, indices[0], indices[1]);
-            double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
-            indices = getBoundIndices(transformedTimes);
-            trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
+            indices = getBoundIndices(sTimes);
+            trTimes = Arrays.copyOfRange(sTimes, indices[0], indices[1]);
+            //double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
+            //indices = getBoundIndices(transformedTimes);
+            //trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
+            mTimes = Arrays.copyOfRange(this.testTimes, indices[0], indices[1]);
         }
         double[] refVals;
-        double[] mTimes = Arrays.copyOfRange(this.times, indices[0], indices[1]);
         for(String protein:this.proteinList){
 
             if(refDict==null) {
@@ -146,9 +182,145 @@ public class Aligner {
             double[] compVals = Arrays.stream(trTimes).map(e ->
                     spline.evaluate(e)).toArray();
 
-            total+= pearson_threshold(refVals, compVals, threshold);
+            if(infoMapRef != null) {
+                double info = 0.0;
+                if(infoMapComp.get(homologDict.get(protein))>1.0 && infoMapRef.get(protein)>1.0) info = 1.0;
+
+                total += pearson_threshold(refVals, compVals,threshold)*info;
+                /*
+                double corr = pearson.correlation(refVals, compVals);
+                if(!Double.isNaN(corr)) {
+                    total += pearson.correlation(refVals, compVals) * ((infoMapRef.get(protein) + infoMapComp.get(homologDict.get(protein))) / 2.0);
+                }*/
+
+            }else{
+
+                total += pearson_threshold(refVals, compVals, threshold);
+            }
         }
         return total;
+    }
+
+
+    public double align_polynomial_sp(SplineDictionary splineDict, UnivariateFunction poly
+            , double threshold){
+        double[] trTimes;
+        int[] indices;
+        double total = 0.0;
+
+        //create time surface
+        double[] sTimes = new double[testTimes.length];
+        int index =0;
+        for(double sTime: this.testTimes){
+            sTimes[index] = poly.value(sTime);
+            if (!(index==0) && sTimes[index]<sTimes[index-1]){
+                return Double.NEGATIVE_INFINITY;
+            }
+            index++;
+        }
+        if(!checkBounds(sTimes)) return Double.NEGATIVE_INFINITY;
+        double[] mTimes;
+
+        indices = getBoundIndices(sTimes);
+        trTimes = Arrays.copyOfRange(sTimes, indices[0], indices[1]);
+        //double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
+        //indices = getBoundIndices(transformedTimes);
+        //trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
+        mTimes = Arrays.copyOfRange(this.testTimes, indices[0], indices[1]);
+
+        double[] refVals;
+        for(String protein:this.proteinList){
+
+
+            MathFunction refSpline = splineDict.getSpline(protein);
+            refVals = Arrays.stream(mTimes).map(e ->
+                    refSpline.evaluate(e)).toArray();
+
+            MathFunction spline = splineDict.getSpline(this.homologDict.get(protein));
+            double[] compVals = Arrays.stream(trTimes).map(e ->
+                    spline.evaluate(e)).toArray();
+
+            if(infoMapRef != null) {
+                double info = 0.0;
+                if(infoMapComp.get(homologDict.get(protein))>1.0 && infoMapRef.get(protein)>1.0) info = 1.0;
+
+                total += pearson_threshold(refVals, compVals,threshold)*info;
+                /*
+                double corr = pearson.correlation(refVals, compVals);
+                if(!Double.isNaN(corr)) {
+                    total += pearson.correlation(refVals, compVals) * ((infoMapRef.get(protein) + infoMapComp.get(homologDict.get(protein))) / 2.0);
+                }*/
+
+            }else{
+
+                total += pearson_threshold(refVals, compVals, threshold);
+            }
+        }
+        return total;
+    }
+
+    public double align_polynomial_info(SplineDictionary splineDict, UnivariateFunction poly){
+        double[] trTimes;
+        int[] indices;
+        double total = 0.0;
+
+        //create time surface
+        double[] sTimes = new double[testTimes.length];
+        int index =0;
+        for(double sTime: this.testTimes){
+            sTimes[index] = poly.value(sTime);
+            if (!(index==0) && sTimes[index]<sTimes[index-1]){
+                return Double.NEGATIVE_INFINITY;
+            }
+            index++;
+        }
+        if(!checkBounds(sTimes)) return Double.NEGATIVE_INFINITY;
+        double[] mTimes;
+        if(refDict==null){
+            double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
+            indices = getBoundIndices(transformedTimes);
+            trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
+            mTimes = Arrays.copyOfRange(this.times, indices[0], indices[1]);
+
+        }
+        else {
+            indices = getBoundIndices(sTimes);
+            trTimes = Arrays.copyOfRange(sTimes, indices[0], indices[1]);
+            //double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
+            //indices = getBoundIndices(transformedTimes);
+            //trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
+            mTimes = Arrays.copyOfRange(this.testTimes, indices[0], indices[1]);
+        }
+        double[] refVals;
+        double[] proteinInformation = new double[this.proteinList.size()];
+        double[] proteinCorrelation = new double[this.proteinList.size()];
+        int protIndex = 0;
+        for(String protein:this.proteinList){
+
+            if(refDict==null) {
+                refVals = Doubles.toArray(this.refTable.row(protein).values());
+                System.out.println("hello");
+                refVals = Arrays.copyOfRange(refVals,indices[0],indices[1]);
+            }
+            else {
+
+                MathFunction refSpline = this.refDict.getSpline(protein);
+                refVals = Arrays.stream(mTimes).map(e ->
+                        refSpline.evaluate(e)).toArray();
+            }
+            MathFunction spline = splineDict.getSpline(this.homologDict.get(protein));
+            double[] compVals = Arrays.stream(trTimes).map(e ->
+                    spline.evaluate(e)).toArray();
+
+            proteinCorrelation[protIndex] = pearson.correlation(refVals,compVals);
+            if(Double.isNaN(proteinCorrelation[protIndex])){
+                proteinCorrelation[protIndex] =0;
+            }
+            proteinInformation[protIndex] = (infoMapRef.get(protein)+
+                    infoMapComp.get(homologDict.get(protein)))/2.0;
+            protIndex++;
+        }
+        return spearman.correlation(proteinCorrelation,proteinInformation);
     }
 
     public double align_polynomial_difference(SplineDictionary splineDict, UnivariateFunction poly
@@ -201,7 +373,12 @@ public class Aligner {
             double[] compVals = Arrays.stream(trTimes).map(e ->
                     spline.evaluate(e)).toArray();
 
-            total+= difference(refVals, compVals);
+            if(infoMapRef != null) {
+                total += difference(refVals, compVals)*((infoMapRef.get(protein)+
+                        infoMapComp.get(homologDict.get(protein)))/2.0);
+            }else{
+                total += difference(refVals, compVals);
+            }
         }
         return (-1.0*total);
     }
@@ -212,7 +389,8 @@ public class Aligner {
 
 
         double total = 0.0;
-        double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
+        double[] transformedTimes;
+        // = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
         //create time surface
         double[] sTimes = new double[testTimes.length];
         int index =0;
@@ -225,19 +403,37 @@ public class Aligner {
             index++;
         }
         if(!checkBounds(sTimes)) return Double.NEGATIVE_INFINITY;
-        int[] indices = getBoundIndices(transformedTimes);
+        int[] indices ;
         double[] refVals;
         double[] compVals;
+        double[] trTimes;
+        double[] mTimes;
+        if(refDict==null){
+            transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
+            indices = getBoundIndices(transformedTimes);
+            trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
+            mTimes = Arrays.copyOfRange(this.times, indices[0], indices[1]);
+
+        }
+        else {
+            indices = getBoundIndices(sTimes);
+            trTimes = Arrays.copyOfRange(sTimes, indices[0], indices[1]);
+            //double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
+            //indices = getBoundIndices(transformedTimes);
+            //trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
+            mTimes = Arrays.copyOfRange(this.testTimes, indices[0], indices[1]);
+        }
+
         //double[] trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
-        double[] refTimes = Arrays.copyOfRange(this.times, indices[0], indices[1]);
-        double[] tTimes = Arrays.copyOfRange(transformedTimes,indices[0], indices[1]);
-        double[] allCorr = new double[refTimes.length];
+        //double[] refTimes = Arrays.copyOfRange(this.times, indices[0], indices[1]);
+        //double[] tTimes = Arrays.copyOfRange(transformedTimes,indices[0], indices[1]);
+        double[] allCorr = new double[mTimes.length];
         List<String> proteinSortedList = new LinkedList<>();
         proteinSortedList.addAll(this.proteinList);
         int corrIndex = 0;
 
 
-        for(double time:refTimes) {
+        for(double time:mTimes) {
             int i = 0;
 
             //refVals = new double[this.proteinList.size()];
@@ -246,11 +442,17 @@ public class Aligner {
             refVals = new double[this.proteinList.size()];
 
             for (String protein : proteinSortedList) {
-                refVals[i] = refTable.get(protein,time);
-                compVals[i] = splineDict.getSpline(homologDict.get(protein)).evaluate(poly.value(tTimes[corrIndex]));
+                if(refDict==null) {
+                    refVals[i] = refTable.get(protein, time);
+                }
+                else{
+                    refVals[i] = refDict.getSpline(protein).evaluate(time);
+                }
+
+                compVals[i] = splineDict.getSpline(homologDict.get(protein)).evaluate(poly.value(trTimes[corrIndex]));
                 i++;
             }
-            allCorr[corrIndex] = spearman.correlation(refVals,compVals);
+            allCorr[corrIndex] = pearson.correlation(refVals,compVals);
             corrIndex++;
         }
         return StatUtils.sum(allCorr);
@@ -441,7 +643,7 @@ public class Aligner {
 
     public boolean checkBounds(double[] refTimes){
         if ((Math.min(refTimes[refTimes.length-1], compTimes[compTimes.length-1]
-                -Math.max(compTimes[0], refTimes[0])) >= ((compTimes[compTimes.length-1]-compTimes[0])*.5))){
+                -Math.max(compTimes[0], refTimes[0])) < ((compTimes[compTimes.length-1]-compTimes[0])*0.75))){
                 return false;
         }
         int tot = 0;
@@ -450,7 +652,8 @@ public class Aligner {
         }
         //System.out.println(tot);
         //System.out.println(((double)refTimes.length)*0.75);
-        return (tot >= (((double)refTimes.length)*0.5));
+
+        return (tot >= ((((double)refTimes.length)*0.75)));
 
     }
 

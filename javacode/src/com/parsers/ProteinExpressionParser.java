@@ -1,5 +1,6 @@
 package com.parsers;
 
+import JavaMI.MutualInformation;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
@@ -72,6 +73,7 @@ public class ProteinExpressionParser {
         for(int i=1;i<header.length;i++){
             times[i-1] = Double.parseDouble(header[i]);
         }
+
         //read in protein expression
         while(scan.hasNextLine()){
             String[] row = scan.nextLine().split(",");
@@ -115,6 +117,8 @@ public class ProteinExpressionParser {
         return (StatUtils.variance(meds)>StatUtils.mean(vars));
     }
 
+
+
     public static TreeBasedTable<String,Double,Double> normalize(TreeBasedTable<String,Double,Double> protTable){
         for(Double time: protTable.columnKeySet()){
             double avg = StatUtils.mean(Doubles.toArray(protTable.columnMap().get(time).values()));
@@ -124,6 +128,44 @@ public class ProteinExpressionParser {
             }
         }
         return protTable;
+    }
+
+    public static Map<String,Double> informationMap(String filename) throws Exception{
+        File file = new File(filename);
+        Scanner scan = new Scanner(file);
+        HashBasedTable<String,Double,LinkedList<Double>> proteinExpression = HashBasedTable.create();
+        TreeBasedTable<String,Double,Double> proteinExpressionAvg = TreeBasedTable.create();
+        List<String> proteins = new LinkedList<>();
+        String[] header = scan.nextLine().split(",");
+        Map<String,Double> infoMap = new HashMap<String,Double>();
+        double[] times = new double[header.length-1];
+
+        //read in times for column names
+        for(int i=1;i<header.length;i++){
+            times[i-1] = Double.parseDouble(header[i]);
+        }
+        //read in protein expression
+        double[] expression = new double[times.length];
+        while(scan.hasNextLine()){
+            String[] row = scan.nextLine().split(",");
+            String protein = row[0];
+            for(int i=1;i<row.length;i++){
+                if(!proteinExpression.contains(row[0],times[i-1])){
+                    proteinExpression.put(row[0],times[i-1],new LinkedList());
+                }
+                expression[i-1] = Double.parseDouble(row[i]);
+            }
+            double info = MutualInformation.calculateMutualInformation(times,expression);
+            //double bin = 0.0;
+            //if(info>1.0) bin=1.0;
+            infoMap.put(protein,info);
+
+        }
+        scan.close();
+
+
+        return infoMap;
+
     }
 }
 

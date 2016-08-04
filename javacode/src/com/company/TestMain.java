@@ -26,8 +26,10 @@ public class TestMain {
             System.out.println(human_table.rowKeySet().size());
             System.out.println(human_table.columnKeySet().toString());
             TreeBasedTable<String,Double,Double> mouse_table = ProteinExpressionParser.parseFile(mouse);
-            mouse_table = ProteinExpressionParser.normalize(mouse_table);
-            human_table = ProteinExpressionParser.normalize(human_table);
+            //mouse_table = ProteinExpressionParser.normalize(mouse_table);
+            //human_table = ProteinExpressionParser.normalize(human_table);
+            Map<String,Double> informationMapMouse = ProteinExpressionParser.informationMap(mouse);
+            Map<String,Double> informationMapHuman = ProteinExpressionParser.informationMap(human);
             System.out.println(mouse_table.rowKeySet().size());
             System.out.println(mouse_table.columnKeySet().toString());
             Map<String,String> homologMap = HomologParser.parse(homologs,"mouse, laboratory");
@@ -39,8 +41,11 @@ public class TestMain {
             SplineDictionary spDict = new SplineDictionary(human_table,new AkimaSplineInterpolator(),
                     human_proteins);
 
+            spDict.addTable(mouse_table,homologMap.keySet());
+
             SplineDictionary spDictRand = new SplineDictionary(human_table,new AkimaSplineInterpolator(),
-                    human_proteins,333);
+                    human_proteins,117);
+            spDictRand.addTable(mouse_table,homologMap.keySet(),3435 );
 
             SplineDictionary refDict = new SplineDictionary(mouse_table, new AkimaSplineInterpolator(),
                     homologMap.keySet());
@@ -58,18 +63,37 @@ public class TestMain {
             Aligner aligner = new Aligner(compTimes,homologMap.keySet(), homologMap, refTimes,mouse_table,
                     checkTimes,refDict);
 
+
+            String line;
+            ParamMain.run(mouse,human,result_file,homologs,'s');
             /*
+            for(String protein: homologMap.keySet()){
+                if(informationMapMouse.get(protein)>1.0 &&
+                        informationMapHuman.get(homologMap.get(protein))>1.0)
+                System.out.println(protein);
+            }*/
+            /*
+            for(String protein : homologMap.keySet()){
+               if(homologMap.values().contains(protein)) System.out.println(protein);
+            }
 
-           for(String protein: homologMap.values()){
-               System.out.println(protein);
-           }*/
 
-            Optimizer opt = new LinearOptimizer('d');
-            double[] randresult= opt.optimizePearson(aligner, spDictRand, 0.7);
-            System.out.println(Doubles.join(",", randresult));
+            Optimizer opt = new LinearOptimizer('s');
+            //double[] randresult= opt.optimizePearson(aligner, spDictRand, 0.7);
+            //System.out.println(Doubles.join(",", randresult));
 
             double[] result= opt.optimizePearson(aligner, spDict, 0.7);
             System.out.println(Doubles.join(",", result));
+            */
+            /*
+            UnivariateFunction lin = new PolynomialFunction(new double[]{-1080.0,93.12560000000015});
+            Set<String> protSet = aligner.align_pearson_set(spDict,lin,0.6);
+            for(String pro:protSet){
+                System.out.println(pro);
+            }*/
+
+
+
 
 
             /*

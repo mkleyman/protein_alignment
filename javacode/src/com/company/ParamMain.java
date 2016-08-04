@@ -32,6 +32,7 @@ public class ParamMain {
             human_proteins.addAll(homologMap.values());
             System.out.println(human_proteins.size());
             SplineDictionary spDict = new SplineDictionary(human_table,new AkimaSplineInterpolator(),human_proteins);
+            spDict.addTable(mouse_table,homologMap.keySet());
             double[] compTimes= Doubles.toArray(human_table.columnKeySet());
             double[] refTimes = Doubles.toArray(mouse_table.columnKeySet());
             double[] checkTimes = new double[50];
@@ -45,6 +46,7 @@ public class ParamMain {
             //double[] compBounds =  {compTimes[0], compTimes[compTimes.length-1]};
             SplineDictionary refDict = new SplineDictionary(mouse_table, new AkimaSplineInterpolator(),
                     homologMap.keySet());
+            refDict.addTable(mouse_table,homologMap.keySet());
             Aligner aligner = new Aligner(compTimes,homologMap.keySet(), homologMap, refTimes,mouse_table,
                     checkTimes,refDict);
             LinkedList<Optimizer> optList = new LinkedList<>();
@@ -55,7 +57,7 @@ public class ParamMain {
             optList.add(new QuadraticOptimizer(mode));
             //optList.add(new CubicOptmizer());
             optList.add(new ExponentialOptimizer(mode));
-            ParameterSearch parSearch = new ParameterSearch(aligner, spDict, new double[]{0.8},optList);
+            ParameterSearch parSearch = new ParameterSearch(aligner, spDict, new double[]{0.7,0.8,0.6},optList);
             parSearch.recordResults(result_file);
            // Aligner.setCompTimes(compBounds);
             //LinearOptimizer linear = new LinearOptimizer();

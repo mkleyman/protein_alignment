@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="infodynamics-dist-1">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../infodynamics-dist-1.3" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="file://$PROJECT_DIR$/../../infodynamics-dist-1.3/javadocs" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../infodynamics-dist-1.3/demos/java" />
+      <root url="file://$PROJECT_DIR$/../../infodynamics-dist-1.3/java/source" />
+      <root url="file://$PROJECT_DIR$/../../infodynamics-dist-1.3/java/unittests" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/../../infodynamics-dist-1.3" recursive="false" />
+  </library>
+</component>

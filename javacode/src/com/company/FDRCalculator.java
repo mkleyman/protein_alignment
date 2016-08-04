@@ -20,12 +20,14 @@ import java.util.concurrent.TimeUnit;
 public class FDRCalculator {
     public static void calculateAllFDR(Map<File,Optimizer> optimizerMap, double[] thresholds, Aligner aligner,
                                        TreeBasedTable<String,Double,Double> expressionTable, AkimaSplineInterpolator splineMaker,
-                                       Set<String> proteinSet, int numTrials){
+                                       Set<String> proteinSet, int numTrials, TreeBasedTable<String,Double,Double> refTable,
+                                       Map<String,String> homologMap){
         ExecutorService executor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
         Random rand = new Random(numTrials);
         SplineDictionary[] randomSplineDicts = new SplineDictionary[numTrials];
         for(int i=0;i<numTrials;i++){
             randomSplineDicts[i] = new SplineDictionary(expressionTable,splineMaker,proteinSet, rand.nextLong());
+            randomSplineDicts[i].addTable(refTable,homologMap.keySet(),rand.nextLong());
         }
         for(double threshold: thresholds){
             for(Map.Entry<File,Optimizer> pair: optimizerMap.entrySet()){

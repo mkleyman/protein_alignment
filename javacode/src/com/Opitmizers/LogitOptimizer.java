@@ -10,7 +10,7 @@ import java.util.Arrays;
 /**
  * Created by mkleyman on 7/20/2016.
  */
-public class LogitOptimizer implements Optimizer {
+public class LogitOptimizer extends Optimizer {
     public static String name = "Logit";
     private char mode ;
 
@@ -42,16 +42,7 @@ public class LogitOptimizer implements Optimizer {
             for(double m = params[2]; m<params[3]; m+= (second_split)){
                 for(double a=m+params[4];a<params[5]; a+= third_split) {
                     LogitTransform poly = new LogitTransform (b,m,a);
-                    if(mode=='a' ) {
-                        opt_val = aligner.align_polynomial_pearson_all(splineDict,poly, threshold);
-                    }
-                    else if(mode=='d'){
-                        opt_val = aligner.align_polynomial_difference(splineDict,poly,threshold);
-                    }
-
-                    else{
-                        opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
-                    }
+                    opt_val = this.optVal(aligner,splineDict,poly,threshold,mode);
                     if (opt_val > max) {
                         max = opt_val;
                         best = new double[]{b, m, a};;

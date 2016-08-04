@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="JavaMI">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../JavaMI" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="file://$PROJECT_DIR$/../../JavaMI" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../JavaMI" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/../../JavaMI" recursive="false" />
+  </library>
+</component>

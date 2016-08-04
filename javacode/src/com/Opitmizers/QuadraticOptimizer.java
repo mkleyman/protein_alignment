@@ -10,7 +10,7 @@ import java.util.Arrays;
 /**
  * Created by mkleyman on 7/19/2016.
  */
-public class QuadraticOptimizer implements Optimizer {
+public class QuadraticOptimizer extends Optimizer {
     public static String name = "Quadratic";
     private char mode ;
 
@@ -45,16 +45,7 @@ public class QuadraticOptimizer implements Optimizer {
                 for(double a=params[4];a<params[5]; a+= third_split) {
                     attempt = new double[]{b, m, a};
                     PolynomialFunction poly = new PolynomialFunction(attempt);
-                    if(mode=='a' ) {
-                        opt_val = aligner.align_polynomial_pearson_all(splineDict,poly, threshold);
-                    }
-                    else if(mode=='d'){
-                        opt_val = aligner.align_polynomial_difference(splineDict,poly,threshold);
-                    }
-
-                    else{
-                        opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
-                    }
+                    opt_val = this.optVal(aligner,splineDict,poly,threshold,mode);
                     if (opt_val > max) {
                         max = opt_val;
                         best = attempt;

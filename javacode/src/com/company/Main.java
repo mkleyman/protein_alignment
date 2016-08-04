@@ -32,7 +32,7 @@ public class Main {
             System.out.println(outfile);
             String homolog = cmd.getOptionValue("h");
             System.out.println(homolog);
-            char mode = 'd';
+            char mode = 's';
             System.out.println(mode);
             if(cmd.getOptionValue("f").equalsIgnoreCase("fdr")) {
                 FDRMain.run(ref, comp, outfile, homolog, mode);

@@ -79,7 +79,7 @@ public class ResultParser {
 
     public static void main(String[] args){
         String resultFile = "../processed/search_results.txt";
-        String tableFile = "../processed/search_table.csv";
+        String tableFile = "../processed/search_table2.csv";
         try {
             createTable(resultFile,tableFile,16,48,0.1);
         } catch (IOException e) {

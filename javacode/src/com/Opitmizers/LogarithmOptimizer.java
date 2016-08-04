@@ -10,7 +10,7 @@ import java.util.Arrays;
 /**
  * Created by mkleyman on 7/20/2016.
  */
-public class LogarithmOptimizer implements Optimizer {
+public class LogarithmOptimizer extends Optimizer {
     public static String name = "Log";
     private char mode ;
 
@@ -34,22 +34,13 @@ public class LogarithmOptimizer implements Optimizer {
         double[] best = {0.0, 0.0};
         double opt_val;
         double max = Double.NEGATIVE_INFINITY;
-        double[] params = {-3000,2000,1.0,10000};
+        double[] params = {-8000,3000,1.0,5000};
         double first_split = (params[1]-params[0])/500.0;
         double second_split = (params[3]-params[2])/500.0;
         for(double b = params[0]; b<params[1]; b+=first_split){
             for(double m = params[2]; m<params[3]; m+= (second_split)){
                 LogarithmTransform poly = new LogarithmTransform(b,m);
-                if(mode=='a' ) {
-                    opt_val = aligner.align_polynomial_pearson_all(splineDict,poly, threshold);
-                }
-                else if(mode=='d'){
-                    opt_val = aligner.align_polynomial_difference(splineDict,poly,threshold);
-                }
-
-                else{
-                    opt_val = aligner.align_polynomial_pearson(splineDict, poly, threshold);
-                }
+                opt_val = this.optVal(aligner,splineDict,poly,threshold,mode);
                 if (opt_val>max){
                     max = opt_val;
                     best = new double[]{b,m};

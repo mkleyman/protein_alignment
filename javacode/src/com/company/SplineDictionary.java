@@ -54,6 +54,38 @@ public class SplineDictionary {
         }
     }
 
+    public void addTable(TreeBasedTable<String,Double,Double> expressionTable,
+                            Set<String> proteinSet ){
+        double[] times = Doubles.toArray(expressionTable.columnKeySet());
+        for(String row: expressionTable.rowKeySet()){
+            if(proteinSet.contains(row)) {
+                double[] expressionVals = Doubles.toArray(expressionTable.row(row).values());
+                //SmoothingCubicSpline scs = new SmoothingCubicSpline(times,expressionVals,20);
+                splineDict.put(row, new SmoothingCubicSpline(times,expressionVals, 0.1));
+
+                //System.out.println(splineDict.get(row).getKnots().length);
+            }
+        }
+    }
+
+
+    public void addTable(TreeBasedTable<String,Double,Double> expressionTable,
+                            Set<String> proteinSet, long rand){
+
+        double[] times = Doubles.toArray(expressionTable.columnKeySet());
+        for(String row: expressionTable.rowKeySet()){
+            if(proteinSet.contains(row)) {
+                List<Double> randomExpressions = new ArrayList<>(expressionTable.row(row).size());
+                randomExpressions.addAll(expressionTable.row(row).values());
+                Collections.shuffle(randomExpressions, new Random(rand));
+                double[] expressionVals = Doubles.toArray(randomExpressions);
+                this.splineDict.put(row, new SmoothingCubicSpline(times,expressionVals,0.1));
+            }
+        }
+    }
+
+
+
     public MathFunction getSpline(String homolog){
         if(this.splineDict.containsKey(homolog)){
             return this.splineDict.get(homolog);
