@@ -24,8 +24,8 @@ public class ParamMain {
             TreeBasedTable mouse_table = ProteinExpressionParser.parseFile(mouse);
             System.out.println(mouse_table.rowKeySet().size());
             System.out.println(mouse_table.columnKeySet().toString());
-            mouse_table = ProteinExpressionParser.normalize(mouse_table);
-            human_table = ProteinExpressionParser.normalize(human_table);
+            //mouse_table = ProteinExpressionParser.normalize(mouse_table);
+            //human_table = ProteinExpressionParser.normalize(human_table);
             Map<String,String> homologMap = HomologParser.parse(homologs,"mouse, laboratory");
             homologMap = HomologParser.trim(homologMap, mouse_table.rowKeySet(),human_table.rowKeySet());
             Set<String> human_proteins = new HashSet<>();
