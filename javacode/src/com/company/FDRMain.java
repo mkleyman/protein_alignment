@@ -25,6 +25,8 @@ public class FDRMain {
             TreeBasedTable mouse_table = ProteinExpressionParser.parseFile(mouse);
             System.out.println(mouse_table.rowKeySet().size());
             System.out.println(mouse_table.columnKeySet().toString());
+            Map<String,Double> informationMapMouse = ProteinExpressionParser.informationMap(mouse);
+            Map<String,Double> informationMapHuman = ProteinExpressionParser.informationMap(human);
             //mouse_table = ProteinExpressionParser.normalize(mouse_table);
             //human_table = ProteinExpressionParser.normalize(human_table);
             Map<String,String> homologMap = HomologParser.parse(homologs,"mouse, laboratory");
@@ -46,7 +48,7 @@ public class FDRMain {
             }
             //double[] compBounds =  {compTimes[0], compTimes[compTimes.length-1]};
             Aligner aligner = new Aligner(compTimes,homologMap.keySet(), homologMap, refTimes,mouse_table,
-                    checkTimes,refDict);
+                    checkTimes,refDict,informationMapMouse,informationMapHuman);
 
             LinkedHashMap<File, Optimizer> optMap = new LinkedHashMap<File, Optimizer>();
 

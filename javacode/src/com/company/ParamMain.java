@@ -24,6 +24,8 @@ public class ParamMain {
             TreeBasedTable mouse_table = ProteinExpressionParser.parseFile(mouse);
             System.out.println(mouse_table.rowKeySet().size());
             System.out.println(mouse_table.columnKeySet().toString());
+            Map<String,Double> informationMapMouse = ProteinExpressionParser.informationMap(mouse);
+            Map<String,Double> informationMapHuman = ProteinExpressionParser.informationMap(human);
             //mouse_table = ProteinExpressionParser.normalize(mouse_table);
             //human_table = ProteinExpressionParser.normalize(human_table);
             Map<String,String> homologMap = HomologParser.parse(homologs,"mouse, laboratory");
@@ -48,7 +50,7 @@ public class ParamMain {
                     homologMap.keySet());
             refDict.addTable(mouse_table,homologMap.keySet());
             Aligner aligner = new Aligner(compTimes,homologMap.keySet(), homologMap, refTimes,mouse_table,
-                    checkTimes,refDict);
+                    checkTimes,refDict,informationMapMouse,informationMapHuman);
             LinkedList<Optimizer> optList = new LinkedList<>();
             optList.add(new LinearOptimizer(mode));
             optList.add(new LogarithmOptimizer(mode));
