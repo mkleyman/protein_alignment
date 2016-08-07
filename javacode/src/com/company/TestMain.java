@@ -7,6 +7,7 @@ import com.google.common.primitives.Doubles;
 import com.parsers.HomologParser;
 import com.parsers.ProteinExpressionParser;
 import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.function.Exp;
 import org.apache.commons.math3.analysis.interpolation.AkimaSplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 
@@ -61,11 +62,11 @@ public class TestMain {
             }
             //double[] compBounds =  {compTimes[0], compTimes[compTimes.length-1]};
             Aligner aligner = new Aligner(compTimes,homologMap.keySet(), homologMap, refTimes,mouse_table,
-                    checkTimes,refDict);
+                    checkTimes,refDict,informationMapMouse,informationMapHuman);
 
 
             String line;
-            ParamMain.run(mouse,human,result_file,homologs,'s');
+            //ParamMain.run(mouse,human,result_file,homologs,'s');
             /*
             for(String protein: homologMap.keySet()){
                 if(informationMapMouse.get(protein)>1.0 &&
@@ -75,19 +76,21 @@ public class TestMain {
             /*
             for(String protein : homologMap.keySet()){
                if(homologMap.values().contains(protein)) System.out.println(protein);
-            }
+            }*/
 
 
             Optimizer opt = new LinearOptimizer('s');
-            //double[] randresult= opt.optimizePearson(aligner, spDictRand, 0.7);
-            //System.out.println(Doubles.join(",", randresult));
+            double[] randresult= opt.optimizePearson(aligner, spDictRand, 0.7);
+            System.out.println(Doubles.join(",", randresult));
 
             double[] result= opt.optimizePearson(aligner, spDict, 0.7);
             System.out.println(Doubles.join(",", result));
-            */
+
+
             /*
             UnivariateFunction lin = new PolynomialFunction(new double[]{-1080.0,93.12560000000015});
-            Set<String> protSet = aligner.align_pearson_set(spDict,lin,0.6);
+            Set<String> protSet = aligner.align_pearson_set(spDict,lin,0.6);*/
+            /*
             for(String pro:protSet){
                 System.out.println(pro);
             }*/
@@ -95,13 +98,13 @@ public class TestMain {
 
 
 
-
             /*
+
             List<String> shuffled = new LinkedList();
             shuffled.addAll(homologMap.keySet());
             Collections.shuffle(shuffled);
             int i = 0;
-            String line;
+
             for(String chosen: shuffled){
                 if(i==5) break;
                 i++;
@@ -116,32 +119,30 @@ public class TestMain {
 
             }*/
 
-            /*
-            UnivariateFunction lin = new PolynomialFunction(new double[]{-2990,96.5728});
-            Map<Double,String> refDifMap = aligner.align_polynomial_refDifMap(spDict,lin,0.7);
-            ArrayList<Double> difList = new ArrayList<>(refDifMap.keySet().size());
-            difList.addAll(refDifMap.keySet());
-            Collections.sort(difList);
-            String[] chosen_proteins = {refDifMap.get(difList.get(0)),refDifMap.get(difList.get(1)),
-                    refDifMap.get(difList.get(2)), refDifMap.get(difList.get(difList.size()-1)),
-                    refDifMap.get(difList.get(difList.size()-2))
-            };
+
+            UnivariateFunction lin = new PolynomialFunction(new double[]{-856.0,95.62360000000015});
+            List<String> chosen_proteins= aligner.align_polynomial_sp_list(spDict,lin,0.7);
+            //List<String> chosen =
+            //};
             //Set<String> chosen_proteins =aligner.align_pearson_refset(spDict,lin,0.7);
             int num_chosen = 0;
-            String line;
+
 
             for(String chosen:chosen_proteins){
                 if(num_chosen==5) break;
-                for(Double mTime: mouse_table.columnKeySet()){
-                    line = chosen +","+homologMap.get(chosen)+",mouse,"+mTime+","+mouse_table.get(chosen,mTime);
+                for(Double mTime: checkTimes){
+                    //line = chosen +","+homologMap.get(chosen)+",mouse,"+mTime+","+mouse_table.get(chosen,mTime);
+                    //System.out.println(line);
+                    line = chosen +","+homologMap.get(chosen)+",mouse_spline,"+mTime+","+spDict.getSpline(chosen).evaluate(mTime);
+
                     System.out.println(line);
-                    if(lin.value(mTime)>=1.0 && lin.value(mTime)<=3285) {
-                        line = chosen +","+homologMap.get(chosen)+ ",mouse_transformed," + lin.value(mTime) + "," + mouse_table.get(chosen, mTime);
+                    //if(lin.value(mTime)>=1.0 && lin.value(mTime)<=3285) {
+                        line = chosen +","+homologMap.get(chosen)+ ",mouse_transformed," + lin.value(mTime) + "," + spDict.getSpline(chosen).evaluate(mTime);
                         System.out.println(line);
                         line = chosen +","+homologMap.get(chosen)+ ",human_spline," + lin.value(mTime) + "," +
-                                spDict.getSpline(homologMap.get(chosen)).value(lin.value(mTime));
+                                spDict.getSpline(homologMap.get(chosen)).evaluate(lin.value(mTime));
                         System.out.println(line);
-                    }
+                   // }
                 }
                 for(Double hTime: human_table.columnKeySet()){
                     line = chosen +","+homologMap.get(chosen)+",human,"+hTime+","+human_table.get(homologMap.get(chosen),hTime);
@@ -149,7 +150,7 @@ public class TestMain {
                 }
                 num_chosen++;
 
-            }*/
+            }
         }
         catch (Exception e){
             e.printStackTrace();

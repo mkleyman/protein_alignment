@@ -259,6 +259,66 @@ public class Aligner {
         return total;
     }
 
+
+
+    public List<String> align_polynomial_sp_list(SplineDictionary splineDict, UnivariateFunction poly
+            , double threshold){
+        double[] trTimes;
+        int[] indices;
+        double total = 0.0;
+
+        //create time surface
+        double[] sTimes = new double[testTimes.length];
+        LinkedList<String> passed = new LinkedList<>();
+        int index =0;
+        for(double sTime: this.testTimes){
+            sTimes[index] = poly.value(sTime);
+            if (!(index==0) && sTimes[index]<sTimes[index-1]){
+                return null;
+            }
+            index++;
+        }
+        if(!checkBounds(sTimes)) return null;
+        double[] mTimes;
+
+        indices = getBoundIndices(sTimes);
+        trTimes = Arrays.copyOfRange(sTimes, indices[0], indices[1]);
+        //double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
+        //indices = getBoundIndices(transformedTimes);
+        //trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
+        mTimes = Arrays.copyOfRange(this.testTimes, indices[0], indices[1]);
+
+        double[] refVals;
+        for(String protein:this.proteinList){
+
+
+            MathFunction refSpline = splineDict.getSpline(protein);
+            refVals = Arrays.stream(mTimes).map(e ->
+                    refSpline.evaluate(e)).toArray();
+
+            MathFunction spline = splineDict.getSpline(this.homologDict.get(protein));
+            double[] compVals = Arrays.stream(trTimes).map(e ->
+                    spline.evaluate(e)).toArray();
+
+            if(infoMapRef != null) {
+                double info = 0.0;
+                if(infoMapComp.get(homologDict.get(protein))>1.0 && infoMapRef.get(protein)>1.0) info = 1.0;
+
+                if(pearson_threshold(refVals, compVals,threshold)> 0.5 && info>0.5) passed.add(protein);
+                /*
+                double corr = pearson.correlation(refVals, compVals);
+                if(!Double.isNaN(corr)) {
+                    total += pearson.correlation(refVals, compVals) * ((infoMapRef.get(protein) + infoMapComp.get(homologDict.get(protein))) / 2.0);
+                }*/
+
+            }else{
+
+                total += pearson_threshold(refVals, compVals, threshold);
+            }
+        }
+        return passed;
+    }
+
     public double align_polynomial_info(SplineDictionary splineDict, UnivariateFunction poly){
         double[] trTimes;
         int[] indices;
