@@ -288,8 +288,8 @@
     <property name="recentsLimit" value="5" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../JavaMI" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../JavaMI/JavaMI.jar!/" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
@@ -675,12 +675,12 @@
       <workItem from="1469583079712" duration="18171000" />
       <workItem from="1469685580405" duration="5000" />
       <workItem from="1469752928739" duration="66940000" />
-      <workItem from="1470268342440" duration="25245000" />
+      <workItem from="1470268342440" duration="25576000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="226134000" />
+    <option name="totallyTimeSpent" value="226465000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1" y="1" width="1918" height="1018" extended-state="0" />
@@ -1178,8 +1178,8 @@
         <settings>
           <artifact-editor>
             <show-content>
-              <type id="jpa-descriptors" />
               <type id="javaee-facet-resources" />
+              <type id="jpa-descriptors" />
               <type id="artifact" />
             </show-content>
           </artifact-editor>
