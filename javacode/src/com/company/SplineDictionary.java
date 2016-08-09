@@ -1,12 +1,9 @@
 package com.company;
 
-import JavaMI.MutualInformation;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.TreeBasedTable;
 import com.google.common.primitives.Doubles;
-import org.apache.commons.math3.analysis.interpolation.AkimaSplineInterpolator;
-import org.apache.commons.math3.analysis.interpolation.LoessInterpolator;
-import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+import org.apache.commons.math3.analysis.interpolation.*;
 import umontreal.ssj.functionfit.SmoothingCubicSpline;
 import umontreal.ssj.functions.MathFunction;
 
@@ -33,14 +30,15 @@ public class SplineDictionary {
                             Set<String> proteinSet ){
         this.splineDict = new HashMap<>();
         double[] times = Doubles.toArray(expressionTable.columnKeySet());
-        LoessInterpolator interpolator = new LoessInterpolator();
+        UnivariateInterpolator interpolator = new LoessInterpolator(0.6,2);
         for(String row: expressionTable.rowKeySet()){
             if(proteinSet.contains(row)) {
                 double[] expressionVals = Doubles.toArray(expressionTable.row(row).values());
                 //SmoothingCubicSpline scs = new SmoothingCubicSpline(times,expressionVals,20);
-                splineDict.put(row, new SmoothingCubicSpline(times,expressionVals, 0.05));
-                //splineDict.put(row,new SplineFun(interpolator.interpolate(times,expressionVals)));
-
+                //splineDict.put(row, new SmoothingCubicSpline(times,expressionVals, 0.3));
+                //splineDict.put(row, BSpline.createApproxBSpline(times,expressionVals,6,3));
+                splineDict.put(row,new SplineFun(interpolator.interpolate(times,expressionVals)));
+                //splineDict.put(row, new SplineFun(new CubicInterpolation(times,expressionVals,0)));
                 //System.out.println(splineDict.get(row).getKnots().length);
             }
         }
@@ -56,16 +54,16 @@ public class SplineDictionary {
         this.splineDict = new HashMap<>();
         double[] times = Doubles.toArray(expressionTable.columnKeySet());
 
-
-
-
+        UnivariateInterpolator interpolator = new LoessInterpolator(0.6,2);
         for(String row: expressionTable.rowKeySet()){
             if(proteinSet.contains(row)) {
                 List<Double> randomExpressions = new ArrayList<>(expressionTable.row(row).size());
                 randomExpressions.addAll(expressionTable.row(row).values());
                 Collections.shuffle(randomExpressions, new Random(rand));
                 double[] expressionVals = Doubles.toArray(randomExpressions);
-                this.splineDict.put(row, new SmoothingCubicSpline(times,expressionVals,0.05));
+                //this.splineDict.put(row, new SmoothingCubicSpline(times,expressionVals,0.1));
+                splineDict.put(row,new SplineFun(interpolator.interpolate(times,expressionVals)));
+
             }
         }
     }
@@ -73,11 +71,16 @@ public class SplineDictionary {
     public void addTable(TreeBasedTable<String,Double,Double> expressionTable,
                             Set<String> proteinSet ){
         double[] times = Doubles.toArray(expressionTable.columnKeySet());
+        UnivariateInterpolator interpolator = new LoessInterpolator(0.6,2);
         for(String row: expressionTable.rowKeySet()){
             if(proteinSet.contains(row)) {
                 double[] expressionVals = Doubles.toArray(expressionTable.row(row).values());
                 //SmoothingCubicSpline scs = new SmoothingCubicSpline(times,expressionVals,20);
-                splineDict.put(row, new SmoothingCubicSpline(times,expressionVals, 0.05));
+                //splineDict.put(row, new SmoothingCubicSpline(times,expressionVals, 0.3));
+               // splineDict.put(row, BSpline.createApproxBSpline(times, expressionVals, 6,3));
+                //splineDict.put(row, new SplineFun(new CubicInterpolation(times,expressionVals,0)));
+
+                splineDict.put(row,new SplineFun(interpolator.interpolate(times,expressionVals)));
 
                 //System.out.println(splineDict.get(row).getKnots().length);
             }
@@ -89,13 +92,16 @@ public class SplineDictionary {
                             Set<String> proteinSet, long rand){
 
         double[] times = Doubles.toArray(expressionTable.columnKeySet());
+        UnivariateInterpolator interpolator = new LoessInterpolator(0.6,2);
         for(String row: expressionTable.rowKeySet()){
             if(proteinSet.contains(row)) {
                 List<Double> randomExpressions = new ArrayList<>(expressionTable.row(row).size());
                 randomExpressions.addAll(expressionTable.row(row).values());
                 Collections.shuffle(randomExpressions, new Random(rand));
                 double[] expressionVals = Doubles.toArray(randomExpressions);
-                this.splineDict.put(row, new SmoothingCubicSpline(times,expressionVals,0.05));
+                //this.splineDict.put(row, new SmoothingCubicSpline(times,expressionVals,0.05));
+                splineDict.put(row,new SplineFun(interpolator.interpolate(times,expressionVals)));
+
             }
         }
     }
@@ -121,7 +127,7 @@ public class SplineDictionary {
                 expression[i-1] = Double.parseDouble(row[i]);
             }
             System.out.println(Arrays.toString(times));
-            splineDict.put(protein, new SplineFun(interpolator.interpolate(times, expression)));
+            ///splineDict.put(protein, new SplineFun(new KrigingInterpolation1D(times,expression)));
 
         }
         scan.close();

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="com.github.haifengl.smile-math-1.1.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../smile-1.1.0/smile-1.1.0/lib/com.github.haifengl.smile-math-1.1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

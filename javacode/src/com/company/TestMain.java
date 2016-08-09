@@ -6,6 +6,7 @@ import com.google.common.collect.TreeBasedTable;
 import com.google.common.primitives.Doubles;
 import com.parsers.HomologParser;
 import com.parsers.ProteinExpressionParser;
+import com.parsers.SplineWriter;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.function.Exp;
 import org.apache.commons.math3.analysis.interpolation.AkimaSplineInterpolator;
@@ -20,10 +21,11 @@ public class TestMain {
         try{
             String human = "../processed/human_proteins.csv";
             String mouse = "../processed/mouse_proteins.csv";
-            String result_file = "../processed/java_results.csv";
+            String result_file = "../processed/aligned_homologs.csv";
             String homologs = "../raw_data/HOM_MouseHumanSequence.rpt";
+            //ParamMain.run(mouse,human,result_file,homologs,'s');
             TreeBasedTable<String,Double,Double> human_table = ProteinExpressionParser.parseFile(human);
-
+            ParamMain.run(mouse,human,result_file,homologs,'s');
             System.out.println(human_table.rowKeySet().size());
             System.out.println(human_table.columnKeySet().toString());
             TreeBasedTable<String,Double,Double> mouse_table = ProteinExpressionParser.parseFile(mouse);
@@ -39,10 +41,11 @@ public class TestMain {
             human_proteins.addAll(homologMap.values());
             System.out.println(human_proteins.size());
 
-            SplineDictionary spDict = new SplineDictionary(human_table,new AkimaSplineInterpolator(),
+           SplineDictionary spDict = new SplineDictionary(human_table,new AkimaSplineInterpolator(),
                     human_proteins);
 
             spDict.addTable(mouse_table,homologMap.keySet());
+
 
             SplineDictionary spDictRand = new SplineDictionary(human_table,new AkimaSplineInterpolator(),
                     human_proteins,117);
@@ -66,6 +69,19 @@ public class TestMain {
 
 
             String line;
+            UnivariateFunction exp = new PolynomialFunction(new double[]{-856.0,95.62360000000015});
+            List<String> goods = aligner.align_polynomial_sp_list(spDict,exp,-2);
+            /*for(String good:goods){
+                System.out.println(good);
+            }
+            SplineWriter.writeFile(result_file,human_table,mouse_table,spDict,checkTimes,homologMap,exp,aligner);*/
+            Optimizer opt = new LinearOptimizer('s');
+            double[] randresult= opt.optimizePearson(aligner, spDictRand, 0.7);
+            System.out.println(Doubles.join(",", randresult));
+
+            double[] result= opt.optimizePearson(aligner, spDict, 0.7);
+            System.out.println(Doubles.join(",", result));
+
             //ParamMain.run(mouse,human,result_file,homologs,'s');
             /*
             for(String protein: homologMap.keySet()){
@@ -76,7 +92,7 @@ public class TestMain {
             /*
             for(String protein : homologMap.keySet()){
                if(homologMap.values().contains(protein)) System.out.println(protein);
-            }*/
+            }
 
 
             Optimizer opt = new LinearOptimizer('s');
@@ -117,7 +133,7 @@ public class TestMain {
                     System.out.println(line);
                 }
 
-            }*/
+            }
 
 
             UnivariateFunction lin = new PolynomialFunction(new double[]{-856.0,95.62360000000015});
@@ -126,7 +142,6 @@ public class TestMain {
             //};
             //Set<String> chosen_proteins =aligner.align_pearson_refset(spDict,lin,0.7);
             int num_chosen = 0;
-
 
             for(String chosen:chosen_proteins){
                 if(num_chosen==5) break;
@@ -150,7 +165,7 @@ public class TestMain {
                 }
                 num_chosen++;
 
-            }
+            }*/
         }
         catch (Exception e){
             e.printStackTrace();

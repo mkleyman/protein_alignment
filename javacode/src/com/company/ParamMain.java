@@ -50,13 +50,13 @@ public class ParamMain {
                     homologMap.keySet());
             refDict.addTable(mouse_table,homologMap.keySet());
             Aligner aligner = new Aligner(compTimes,homologMap.keySet(), homologMap, refTimes,mouse_table,
-                    checkTimes,refDict,informationMapMouse,informationMapHuman);
+                    checkTimes,refDict, informationMapMouse, informationMapHuman);
             LinkedList<Optimizer> optList = new LinkedList<>();
             optList.add(new LinearOptimizer(mode));
             optList.add(new LogarithmOptimizer(mode));
             optList.add(new SqrtOptimizer(mode));
             //optList.add(new LogitOptimizer());
-            optList.add(new QuadraticOptimizer(mode));
+            //optList.add(new QuadraticOptimizer(mode));
             //optList.add(new CubicOptmizer());
             optList.add(new ExponentialOptimizer(mode));
             ParameterSearch parSearch = new ParameterSearch(aligner, spDict, new double[]{0.7,0.8,0.6},optList);
