@@ -703,7 +703,7 @@ public class Aligner {
 
     public boolean checkBounds(double[] refTimes){
         if ((Math.min(refTimes[refTimes.length-1], compTimes[compTimes.length-1]
-                -Math.max(compTimes[0], refTimes[0])) < ((compTimes[compTimes.length-1]-compTimes[0])*0.75))){
+                -Math.max(compTimes[0], refTimes[0])) < ((compTimes[compTimes.length-1]-compTimes[0])*0.5))){
                 return false;
         }
         int tot = 0;
@@ -713,7 +713,7 @@ public class Aligner {
         //System.out.println(tot);
         //System.out.println(((double)refTimes.length)*0.75);
 
-        return (tot >= ((((double)refTimes.length)*0.75)));
+        return (tot >= ((((double)refTimes.length)*0.5)));
 
     }
 

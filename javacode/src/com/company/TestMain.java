@@ -25,7 +25,7 @@ public class TestMain {
             String homologs = "../raw_data/HOM_MouseHumanSequence.rpt";
             //ParamMain.run(mouse,human,result_file,homologs,'s');
             TreeBasedTable<String,Double,Double> human_table = ProteinExpressionParser.parseFile(human);
-            ParamMain.run(mouse,human,result_file,homologs,'s');
+            //ParamMain.run(mouse,human,result_file,homologs,'s');
             System.out.println(human_table.rowKeySet().size());
             System.out.println(human_table.columnKeySet().toString());
             TreeBasedTable<String,Double,Double> mouse_table = ProteinExpressionParser.parseFile(mouse);
@@ -49,7 +49,7 @@ public class TestMain {
 
             SplineDictionary spDictRand = new SplineDictionary(human_table,new AkimaSplineInterpolator(),
                     human_proteins,117);
-            spDictRand.addTable(mouse_table,homologMap.keySet(),3435 );
+            spDictRand.addTable(mouse_table,homologMap.keySet(),20452432 );
 
             SplineDictionary refDict = new SplineDictionary(mouse_table, new AkimaSplineInterpolator(),
                     homologMap.keySet());
@@ -65,22 +65,25 @@ public class TestMain {
             }
             //double[] compBounds =  {compTimes[0], compTimes[compTimes.length-1]};
             Aligner aligner = new Aligner(compTimes,homologMap.keySet(), homologMap, refTimes,mouse_table,
-                    checkTimes,refDict,informationMapMouse,informationMapHuman);
+                    checkTimes,refDict);
 
 
             String line;
             UnivariateFunction exp = new PolynomialFunction(new double[]{-856.0,95.62360000000015});
+            exp = new ExpTransform(480.0,0.1904000000000026);
             List<String> goods = aligner.align_polynomial_sp_list(spDict,exp,-2);
             /*for(String good:goods){
                 System.out.println(good);
-            }
-            SplineWriter.writeFile(result_file,human_table,mouse_table,spDict,checkTimes,homologMap,exp,aligner);*/
+            }*/
+            SplineWriter.writeFile(result_file,human_table,mouse_table,spDict,checkTimes,homologMap,exp,aligner);
+            /*
             Optimizer opt = new LinearOptimizer('s');
             double[] randresult= opt.optimizePearson(aligner, spDictRand, 0.7);
             System.out.println(Doubles.join(",", randresult));
 
             double[] result= opt.optimizePearson(aligner, spDict, 0.7);
-            System.out.println(Doubles.join(",", result));
+            System.out.println(Doubles.join(",", result));*/
+
 
             //ParamMain.run(mouse,human,result_file,homologs,'s');
             /*
