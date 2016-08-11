@@ -46,9 +46,16 @@ public class FDRMain {
                 index++;
 
             }
+            Set<String> proteinSet = new HashSet<>();
+            for(String prot: homologMap.keySet()){
+                if(informationMapMouse.get(prot)>=1.0 && informationMapHuman.get(homologMap.get(prot))>= 1.0){
+                    proteinSet.add(prot);
+
+                }
+            }
             //double[] compBounds =  {compTimes[0], compTimes[compTimes.length-1]};
-            Aligner aligner = new Aligner(compTimes,homologMap.keySet(), homologMap, refTimes,mouse_table,
-                    checkTimes,refDict,informationMapMouse,informationMapHuman);
+            Aligner aligner = new Aligner(compTimes,proteinSet, homologMap, refTimes,mouse_table,
+                    checkTimes,refDict);
 
             LinkedHashMap<File, Optimizer> optMap = new LinkedHashMap<File, Optimizer>();
 
@@ -56,20 +63,25 @@ public class FDRMain {
             //quadFile.createNewFile();
             //optMap.put(quadFile,new QuadraticOptimizer());
 
-            File logFile = new File(out+"/logarithm.csv");
-            logFile.createNewFile();
-            optMap.put(logFile, new LogarithmOptimizer(mode));
-            File linear = new File(out+"/linear.csv");
-            linear.createNewFile();
-            optMap.put(linear, new LinearOptimizer(mode));
+            File sqrtFile = new File(out+"/sqrt.csv");
+            sqrtFile.createNewFile();
+            optMap.put(sqrtFile, new SqrtOptimizer(mode));
+
             File expFile = new File(out+"/exp.csv");
             expFile.createNewFile();
             optMap.put(expFile, new ExponentialOptimizer(mode));
 
-            File sqrtFile = new File(out+"/sqrt.csv");
-            sqrtFile.createNewFile();
-            optMap.put(sqrtFile, new SqrtOptimizer(mode));
-            FDRCalculator.calculateAllFDR(optMap,new double[]{0.7,0.8,0.6},aligner,human_table,
+            File logFile = new File(out+"/logarithm.csv");
+            logFile.createNewFile();
+            optMap.put(logFile, new LogarithmOptimizer(mode));
+            
+            File linear = new File(out+"/linear.csv");
+            linear.createNewFile();
+            optMap.put(linear, new LinearOptimizer(mode));
+
+
+
+            FDRCalculator.calculateAllFDR(optMap,new double[]{0.8,0.6,0.7},aligner,human_table,
                     new AkimaSplineInterpolator(), human_proteins, 500, mouse_table,homologMap);
 
 

@@ -181,22 +181,7 @@ public class Aligner {
             MathFunction spline = splineDict.getSpline(this.homologDict.get(protein));
             double[] compVals = Arrays.stream(trTimes).map(e ->
                     spline.evaluate(e)).toArray();
-
-            if(infoMapRef != null) {
-                double info = 0.0;
-                if(infoMapComp.get(homologDict.get(protein))>1.0 && infoMapRef.get(protein)>1.0) info = 1.0;
-
-                total += pearson_threshold(refVals, compVals,threshold)*info;
-                /*
-                double corr = pearson.correlation(refVals, compVals);
-                if(!Double.isNaN(corr)) {
-                    total += pearson.correlation(refVals, compVals) * ((infoMapRef.get(protein) + infoMapComp.get(homologDict.get(protein))) / 2.0);
-                }*/
-
-            }else{
-
-                total += pearson_threshold(refVals, compVals, threshold);
-            }
+            total += pearson_threshold(refVals, compVals, threshold);
         }
         return total;
     }
@@ -509,7 +494,9 @@ public class Aligner {
                     refVals[i] = refDict.getSpline(protein).evaluate(time);
                 }
 
-                compVals[i] = splineDict.getSpline(homologDict.get(protein)).evaluate(poly.value(trTimes[corrIndex]));
+                //System.out.println(Arrays.toString(trTimes));
+                compVals[i] = splineDict.getSpline(homologDict.get(protein)).evaluate(trTimes[corrIndex]);
+
                 i++;
             }
             allCorr[corrIndex] = pearson.correlation(refVals,compVals);
