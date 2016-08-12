@@ -2,6 +2,7 @@ package com.company;
 
 import com.Opitmizers.*;
 import com.TransformationFunctions.ExpTransform;
+import com.TransformationFunctions.LogarithmTransform;
 import com.google.common.collect.TreeBasedTable;
 import com.google.common.primitives.Doubles;
 import com.parsers.HomologParser;
@@ -23,7 +24,7 @@ public class TestMain {
             String mouse = "../processed/mouse_proteins.csv";
             String result_file = "../processed/aligned_homologs.csv";
             String homologs = "../raw_data/HOM_MouseHumanSequence.rpt";
-            ParamMain.run(mouse,human,result_file,homologs,'p');
+            //ParamMain.run(mouse,human,result_file,homologs,'p');
             TreeBasedTable<String,Double,Double> human_table = ProteinExpressionParser.parseFile(human);
             //ParamMain.run(mouse,human,result_file,homologs,'s');
             System.out.println(human_table.rowKeySet().size());
@@ -67,28 +68,27 @@ public class TestMain {
             for(String prot: homologMap.keySet()){
                 if(informationMapMouse.get(prot)>=1.0 && informationMapHuman.get(homologMap.get(prot))>= 1.0){
                     proteinSet.add(prot);
-
-                }
-                else{
                     proteinSet.add(prot);
                 }
             }
             System.out.println(proteinSet.size());
             //double[] compBounds =  {compTimes[0], compTimes[compTimes.length-1]};
             Aligner aligner = new Aligner(compTimes,proteinSet, homologMap, refTimes,mouse_table,
-                    checkTimes,refDict);
+                    checkTimes,refDict, informationMapMouse,informationMapHuman);
 
 
             String line;
-            UnivariateFunction exp = new PolynomialFunction(new double[]{-632.0,67.1464000000001});
+            UnivariateFunction lin = new PolynomialFunction(new double[]{1512.0,4.19680});
             //exp = new ExpTransform(480.0,0.1904000000000026);
-            List<String> goods = aligner.align_polynomial_sp_list(spDict,exp,-2);
-            /*for(String good:goods){
+           // aligner.align_polynomial_pearson(spDict,lin,0.7);
+            /*
+            List<String> goods = aligner.align_polynomial_sp_list(spDict,lin,0.7);
+            for(String good:goods){
                 System.out.println(good);
-            }*/
-            //SplineWriter.writeFile(result_file,human_table,mouse_table,spDict,checkTimes,homologMap,exp,aligner);
-
-            Optimizer opt = new SqrtOptimizer('p');
+            }
+            SplineWriter.writeFile(result_file,human_table,mouse_table,spDict,checkTimes,homologMap,lin,aligner);
+            */
+            Optimizer opt = new LinearOptimizer('p');
             double[] randresult= opt.optimizePearson(aligner, spDictRand, 0.7);
             System.out.println(Doubles.join(",", randresult));
 

@@ -689,8 +689,8 @@ public class Aligner {
     }
 
     public boolean checkBounds(double[] refTimes){
-        if ((Math.min(refTimes[refTimes.length-1], compTimes[compTimes.length-1]
-                -Math.max(compTimes[0], refTimes[0])) < ((compTimes[compTimes.length-1]-compTimes[0])*0.5))){
+        if ((Math.min(refTimes[refTimes.length-1], compTimes[compTimes.length-1])
+                -Math.max(compTimes[0], refTimes[0]) < ((compTimes[compTimes.length-1]-compTimes[0])*0.5))){
                 return false;
         }
         int tot = 0;
