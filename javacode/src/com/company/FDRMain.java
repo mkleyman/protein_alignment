@@ -74,14 +74,14 @@ public class FDRMain {
             File logFile = new File(out+"/logarithm.csv");
             logFile.createNewFile();
             optMap.put(logFile, new LogarithmOptimizer(mode));
-            
+
             File linear = new File(out+"/linear.csv");
             linear.createNewFile();
             optMap.put(linear, new LinearOptimizer(mode));
 
 
 
-            FDRCalculator.calculateAllFDR(optMap,new double[]{0.8,0.6,0.7},aligner,human_table,
+            FDRCalculator.calculateAllFDR(optMap,new double[]{0.7},aligner,human_table,
                     new AkimaSplineInterpolator(), human_proteins, 500, mouse_table,homologMap);
 
 
