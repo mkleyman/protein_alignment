@@ -71,13 +71,14 @@ public class FDRMain {
             expFile.createNewFile();
             optMap.put(expFile, new ExponentialOptimizer(mode));
 
+            /*
             File logFile = new File(out+"/logarithm.csv");
             logFile.createNewFile();
             optMap.put(logFile, new LogarithmOptimizer(mode));
 
             File linear = new File(out+"/linear.csv");
             linear.createNewFile();
-            optMap.put(linear, new LinearOptimizer(mode));
+            optMap.put(linear, new LinearOptimizer(mode));*/
 
 
 

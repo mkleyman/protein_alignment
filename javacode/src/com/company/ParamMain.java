@@ -49,8 +49,17 @@ public class ParamMain {
             SplineDictionary refDict = new SplineDictionary(mouse_table, new AkimaSplineInterpolator(),
                     homologMap.keySet());
             refDict.addTable(mouse_table,homologMap.keySet());
-            Aligner aligner = new Aligner(compTimes,homologMap.keySet(), homologMap, refTimes,mouse_table,
-                    checkTimes,refDict, informationMapMouse, informationMapHuman);
+            Set<String> proteinSet = new HashSet<>();
+            for(String prot: homologMap.keySet()){
+                if(informationMapMouse.get(prot)>=1.0 && informationMapHuman.get(homologMap.get(prot))>= 1.0){
+                    proteinSet.add(prot);
+
+                }
+            }
+            System.out.println(proteinSet.size());
+            //double[] compBounds =  {compTimes[0], compTimes[compTimes.length-1]};
+            Aligner aligner = new Aligner(compTimes,proteinSet, homologMap, refTimes,mouse_table,
+                    checkTimes,refDict);
             LinkedList<Optimizer> optList = new LinkedList<>();
             optList.add(new LinearOptimizer(mode));
             optList.add(new LogarithmOptimizer(mode));

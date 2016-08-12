@@ -23,7 +23,7 @@ public class TestMain {
             String mouse = "../processed/mouse_proteins.csv";
             String result_file = "../processed/aligned_homologs.csv";
             String homologs = "../raw_data/HOM_MouseHumanSequence.rpt";
-            //ParamMain.run(mouse,human,result_file,homologs,'s');
+            ParamMain.run(mouse,human,result_file,homologs,'p');
             TreeBasedTable<String,Double,Double> human_table = ProteinExpressionParser.parseFile(human);
             //ParamMain.run(mouse,human,result_file,homologs,'s');
             System.out.println(human_table.rowKeySet().size());
@@ -69,6 +69,9 @@ public class TestMain {
                     proteinSet.add(prot);
 
                 }
+                else{
+                    proteinSet.add(prot);
+                }
             }
             System.out.println(proteinSet.size());
             //double[] compBounds =  {compTimes[0], compTimes[compTimes.length-1]};
@@ -85,9 +88,9 @@ public class TestMain {
             }*/
             //SplineWriter.writeFile(result_file,human_table,mouse_table,spDict,checkTimes,homologMap,exp,aligner);
 
-            Optimizer opt = new LinearOptimizer('p');
-            //double[] randresult= opt.optimizePearson(aligner, spDictRand, 0.7);
-            //System.out.println(Doubles.join(",", randresult));
+            Optimizer opt = new SqrtOptimizer('p');
+            double[] randresult= opt.optimizePearson(aligner, spDictRand, 0.7);
+            System.out.println(Doubles.join(",", randresult));
 
             double[] result= opt.optimizePearson(aligner, spDict, 0.7);
             System.out.println(Doubles.join(",", result));
