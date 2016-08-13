@@ -187,6 +187,60 @@ public class Aligner {
     }
 
 
+    public double align_polynomial_single(SplineDictionary splineDict, UnivariateFunction poly
+            , String ref_protein){
+        double[] trTimes;
+        int[] indices;
+        double total = 0.0;
+
+        //create time surface
+        double[] sTimes = new double[testTimes.length];
+        int index =0;
+        for(double sTime: this.testTimes){
+            sTimes[index] = poly.value(sTime);
+            if (!(index==0) && sTimes[index]<sTimes[index-1]){
+                return Double.NEGATIVE_INFINITY;
+            }
+            index++;
+        }
+        //if(!checkBounds(sTimes)) return Double.NEGATIVE_INFINITY;
+        double[] mTimes;
+        if(refDict==null){
+            double[] transformedTimes = Arrays.stream(this.times).map(e->poly.value(e)).toArray();
+            indices = getBoundIndices(transformedTimes);
+            trTimes = Arrays.copyOfRange(transformedTimes, indices[0], indices[1]);
+            mTimes = Arrays.copyOfRange(this.times, indices[0], indices[1]);
+
+        }
+        else {
+            indices = getBoundIndices(sTimes);
+            trTimes = Arrays.copyOfRange(sTimes, indices[0], indices[1]);
+
+            mTimes = Arrays.copyOfRange(this.testTimes, indices[0], indices[1]);
+        }
+        double[] refVals;
+
+
+        if(refDict==null) {
+            refVals = Doubles.toArray(this.refTable.row(ref_protein).values());
+            System.out.println("hello");
+            refVals = Arrays.copyOfRange(refVals,indices[0],indices[1]);
+        }
+        else {
+
+            MathFunction refSpline = this.refDict.getSpline(ref_protein);
+            refVals = Arrays.stream(mTimes).map(e ->
+                    refSpline.evaluate(e)).toArray();
+        }
+        MathFunction spline = splineDict.getSpline(this.homologDict.get(ref_protein));
+        double[] compVals = Arrays.stream(trTimes).map(e ->
+                spline.evaluate(e)).toArray();
+        return pearson.correlation(refVals,compVals);
+
+    }
+
+
+
     public double align_polynomial_sp(SplineDictionary splineDict, UnivariateFunction poly
             , double threshold){
         double[] trTimes;
@@ -689,8 +743,9 @@ public class Aligner {
     }
 
     public boolean checkBounds(double[] refTimes){
+
         if ((Math.min(refTimes[refTimes.length-1], compTimes[compTimes.length-1])
-                -Math.max(compTimes[0], refTimes[0]) < ((compTimes[compTimes.length-1]-compTimes[0])*0.75))){
+                -Math.max(compTimes[0], refTimes[0]) < ((compTimes[compTimes.length-1]-compTimes[0])*0.5))){
                 return false;
         }
         int tot = 0;
@@ -700,7 +755,7 @@ public class Aligner {
         //System.out.println(tot);
         //System.out.println(((double)refTimes.length)*0.75);
 
-        return (tot >= ((((double)refTimes.length)*0.75)));
+        return (tot >= ((((double)refTimes.length)*0.5)));
 
     }
 

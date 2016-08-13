@@ -78,7 +78,9 @@ public class TestMain {
 
 
             String line;
-            UnivariateFunction lin = new PolynomialFunction(new double[]{1512.0,4.19680});
+            UnivariateFunction lin = new PolynomialFunction(new double[]{-264.0,112.11040000000018});
+            SplineWriter.writeFile(result_file,human_table,mouse_table,spDict,checkTimes,homologMap,lin,aligner);
+
             //exp = new ExpTransform(480.0,0.1904000000000026);
            // aligner.align_polynomial_pearson(spDict,lin,0.7);
             /*
@@ -87,7 +89,7 @@ public class TestMain {
                 System.out.println(good);
             }
             SplineWriter.writeFile(result_file,human_table,mouse_table,spDict,checkTimes,homologMap,lin,aligner);
-            */
+
             Optimizer opt = new LinearOptimizer('p');
             double[] randresult= opt.optimizePearson(aligner, spDictRand, 0.7);
             System.out.println(Doubles.join(",", randresult));
